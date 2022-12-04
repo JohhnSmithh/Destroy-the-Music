@@ -26,4 +26,9 @@ public class MenuButtonManager : MonoBehaviour
     {
         GameManager.instance.QuitGame();
     }
+
+    public void LoadMenu()
+    {
+        GameManager.instance.LoadMenuScene();
+    }
 }

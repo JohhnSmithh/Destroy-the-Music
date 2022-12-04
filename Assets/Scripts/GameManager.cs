@@ -99,6 +99,11 @@ public class GameManager : MonoBehaviour
         LoadScene("InfoScene");
     }
 
+    public void LoadMenuScene()
+    {
+        LoadScene("MenuScene");
+    }
+
     public void QuitGame()
     {
         Application.Quit();
