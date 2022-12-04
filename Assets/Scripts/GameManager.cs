@@ -91,7 +91,7 @@ public class GameManager : MonoBehaviour
 
     public void LoadGame()
     {
-        LoadScene("TriviaScene");
+        LoadScene("GameScene");
     }
 
     public void LoadInfoScene()
