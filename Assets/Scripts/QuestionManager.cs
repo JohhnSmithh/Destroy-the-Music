@@ -38,7 +38,7 @@ public class QuestionManager : MonoBehaviour
         falseButton.SetActive(false);
     }
 
-    // Update is called once per frame
+    // Update is called once per frame 
     void Update()
     {
         if(questionType == QuestionType.None)
@@ -61,11 +61,20 @@ public class QuestionManager : MonoBehaviour
         // add boss HP bar render
     }
 
+    public float getHealthPercentage()
+    {
+        return (float) bossHP / MAX_HP;
+    }
+
     #region BUTTON PRESS FUNCTIONS
     public void truePress()
     {
         if (correctAnswer == 1)
-            bossHP-=HP_ON_CORRECT;
+        {
+            bossHP -= HP_ON_CORRECT;
+            if (bossHP < 0)
+                bossHP = 0;
+        }
         else
         {
             bossHP += HP_ON_INCORRECT;
@@ -77,7 +86,11 @@ public class QuestionManager : MonoBehaviour
     public void falsePress()
     {
         if (correctAnswer == 0)
+        {
             bossHP -= HP_ON_CORRECT;
+            if (bossHP < 0)
+                bossHP = 0;
+        }
         else
         {
             bossHP += HP_ON_INCORRECT;
