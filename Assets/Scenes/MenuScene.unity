@@ -821,7 +821,7 @@ GameObject:
   - component: {fileID: 943392846}
   - component: {fileID: 943392847}
   m_Layer: 5
-  m_Name: Selected Indicator
+  m_Name: Unselected Indicator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2111,7 +2111,7 @@ GameObject:
   - component: {fileID: 1969275507}
   - component: {fileID: 1969275508}
   m_Layer: 5
-  m_Name: Selected Indicator
+  m_Name: Unselected Indicator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

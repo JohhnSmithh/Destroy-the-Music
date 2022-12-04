@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SelectedIndicator : MonoBehaviour
+public class LinearSelectedIndicator : MonoBehaviour
 {
     [SerializeField] private GameObject indicator;
     [SerializeField] private bool isLinear;
