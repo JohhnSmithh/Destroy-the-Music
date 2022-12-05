@@ -451,6 +451,27 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: EmptyButton
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 155
+        width: 20
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f8ee9e350c844f0469ba586c76791ab5
+      internalID: 1110983834
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -469,7 +490,7 @@ TextureImporter:
       X: -370451354
       B: -1465513762
       BHover: -304771273
-      Buttons_0: 196707250
+      EmptyButton: 196707250
       Check: -1267744157
       DHover: 973090743
       hoveredOption: -1911758292

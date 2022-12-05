@@ -91,6 +91,12 @@ public class QuestionManager : MonoBehaviour
                 confirmButton.SetActive(false);
                 rangeText.gameObject.SetActive(false);
 
+                // reset to proper text box texture
+                questionText.transform.GetChild(0).gameObject.SetActive(false);
+                questionText.transform.GetChild(1).gameObject.SetActive(true);
+                questionText.transform.GetChild(2).gameObject.SetActive(false);
+                questionText.transform.GetChild(3).gameObject.SetActive(false);
+
                 // randomly select next question type
                 questionType = (QuestionType) Random.Range(0, 4);
 
@@ -268,6 +274,9 @@ public class QuestionManager : MonoBehaviour
         // announcer says results
         GameManager.instance.PlayRandomVoiceAudio();
 
+        // disable standard bubble
+        questionText.transform.GetChild(1).gameObject.SetActive(false);
+
         answered = true;
         nextQuestionTimer = 0;
         trueButton.GetComponent<Button>().interactable = false;
@@ -280,6 +289,9 @@ public class QuestionManager : MonoBehaviour
                 remainingSongs = 0;
 
             questionText.SetText("Good job! You just destroyed X tracks!");
+
+            // enable correct bubble
+            questionText.transform.GetChild(2).gameObject.SetActive(true);
         }
         else
         {
@@ -288,6 +300,9 @@ public class QuestionManager : MonoBehaviour
                 remainingSongs = MAX_HP; // ensures HP does not exceed max
 
             questionText.SetText("Uh Oh! Y more tracks were just created!");
+
+            // enable incorrect bubble
+            questionText.transform.GetChild(3).gameObject.SetActive(true);
         }
 
         // show check and x marks to show correct and incorrect answers
@@ -328,6 +343,9 @@ public class QuestionManager : MonoBehaviour
         // announcer says results
         GameManager.instance.PlayRandomVoiceAudio();
 
+        // disable standard bubble
+        questionText.transform.GetChild(1).gameObject.SetActive(false);
+
         answered = true;
         nextQuestionTimer = 0;
         aButton.GetComponent<Button>().interactable = false;
@@ -342,6 +360,9 @@ public class QuestionManager : MonoBehaviour
                 remainingSongs = 0;
 
             questionText.SetText("Good job! You just destroyed X tracks!");
+
+            // enable correct bubble
+            questionText.transform.GetChild(2).gameObject.SetActive(true);
         }
         else
         {
@@ -350,6 +371,9 @@ public class QuestionManager : MonoBehaviour
                 remainingSongs = MAX_HP; // ensures HP does not exceed max
 
             questionText.SetText("Uh Oh! Y more tracks were just created!");
+
+            // enable incorrect bubble
+            questionText.transform.GetChild(3).gameObject.SetActive(true);
         }
 
         // show check and x marks to show correct and incorrect answers
@@ -393,6 +417,9 @@ public class QuestionManager : MonoBehaviour
         // announcer says results
         GameManager.instance.PlayRandomVoiceAudio();
 
+        // disable standard bubble
+        questionText.transform.GetChild(1).gameObject.SetActive(false);
+
         answered = true;
         nextQuestionTimer = 0;
         confirmButton.GetComponent<Button>().interactable = false;
@@ -410,6 +437,9 @@ public class QuestionManager : MonoBehaviour
             confirmButton.transform.GetChild(2).gameObject.SetActive(true);
             rangeText.SetText("Current Range: " + (rangeCenterGuess - 0.1f).ToString("0.00") + "-" + (rangeCenterGuess + 0.1f).ToString("0.00")
             + "\n<color=green>Correct Answer: " + correctAnswer.ToString("0.00") +"</color>");
+
+            // enable correct bubble
+            questionText.transform.GetChild(2).gameObject.SetActive(true);
         }
         else
         {
@@ -423,6 +453,9 @@ public class QuestionManager : MonoBehaviour
             confirmButton.transform.GetChild(1).gameObject.SetActive(true);
             rangeText.SetText("Current Range: " + (rangeCenterGuess - 0.1f).ToString("0.00") + "-" + (rangeCenterGuess + 0.1f).ToString("0.00")
             + "\n<color=red>Correct Answer: " + correctAnswer.ToString("0.00") + "</color>");
+
+            // enable incorrect bubble
+            questionText.transform.GetChild(3).gameObject.SetActive(true);
         }
     }
     #endregion
