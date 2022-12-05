@@ -18,16 +18,19 @@ public class ShadeOnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     // Start is called before the first frame update
     void Start()
     {
-        image = GetComponent<Image>();
-        image.color = new Color(image.color.r, image.color.g, image.color.b, ALPHA_BASE); // set to initial base alpha value
-
         button = GetComponent<Button>();
     }
 
     // Update is called once per frame
     void Update()
+    {    
+    }
+
+
+    void OnEnable()
     {
-        
+        image = GetComponent<Image>();
+        image.color = new Color(image.color.r, image.color.g, image.color.b, ALPHA_BASE); // set to initial base alpha value
     }
 
     public void OnPointerEnter(PointerEventData eventData)
