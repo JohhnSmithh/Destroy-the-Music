@@ -18,6 +18,13 @@ public class GameManager : MonoBehaviour
     }
     private SaveData data;
 
+    // Audio files
+    [SerializeField] private AudioClip voice1;
+    [SerializeField] private AudioClip voice2;
+    [SerializeField] private AudioClip voice3;
+    [SerializeField] private AudioClip voice4;
+    [SerializeField] private AudioClip voice5;
+
     #region UNITY FUNCTIONS
 
     public void Awake() // called each time a scene is laoded/reloaded

@@ -972,6 +972,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e04fd8bcc95018d41adcc0eeb7a8d1e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  voice1: {fileID: 8300000, guid: b7d4a9b7812defb44ba5d27329c22bb6, type: 3}
+  voice2: {fileID: 8300000, guid: e85864cd6fab4264db1cef0db6e6b45c, type: 3}
+  voice3: {fileID: 8300000, guid: 41493513931fd1047b9898a0325d48bd, type: 3}
+  voice4: {fileID: 8300000, guid: 0ba3e9cb170d10a4f808e89b1344854a, type: 3}
+  voice5: {fileID: 8300000, guid: 16b0d1818c0d57a419627b873c917926, type: 3}
 --- !u!4 &1079089079
 Transform:
   m_ObjectHideFlags: 0
