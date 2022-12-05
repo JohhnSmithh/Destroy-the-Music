@@ -7,13 +7,13 @@ using UnityEngine.EventSystems;
 public class ShadeOnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
 
-    // constants
-    private const float ALPHA_BASE = 0.5f;
-    private const float ALPHA_HOVER = 1.0f;
-
     // Unity variables
     private Image image;
     private Button button;
+
+    // Inspector variables
+    [SerializeField] Sprite baseTexture;
+    [SerializeField] Sprite hoverTexture;
 
     // Start is called before the first frame update
     void Start()
@@ -30,18 +30,18 @@ public class ShadeOnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     void OnEnable()
     {
         image = GetComponent<Image>();
-        image.color = new Color(image.color.r, image.color.g, image.color.b, ALPHA_BASE); // set to initial base alpha value
+        image.sprite = baseTexture;
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if(button.interactable)
-            image.color = new Color(image.color.r, image.color.b, image.color.g, ALPHA_HOVER); // set ALPHA value (transparent highlight)
+        if (button.interactable)
+            image.sprite = hoverTexture;
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if(button.interactable)
-            image.color = new Color(image.color.r, image.color.b, image.color.g, ALPHA_BASE); // return to ALPHA_BASE state
+        if (button.interactable)
+            image.sprite = baseTexture;
     }
 }

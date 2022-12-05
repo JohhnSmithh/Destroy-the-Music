@@ -327,6 +327,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80c4a89e04cb84748a3f4d2ba7ccf365, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseTexture: {fileID: 1223560815, guid: 6710b83b22ccc5847bdb0f8498142f4c, type: 3}
+  hoverTexture: {fileID: 147930312, guid: 6710b83b22ccc5847bdb0f8498142f4c, type: 3}
 --- !u!114 &829032194
 MonoBehaviour:
   m_ObjectHideFlags: 0
