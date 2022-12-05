@@ -14,6 +14,9 @@ public class QuestionManager : MonoBehaviour
     [SerializeField] private GameObject bButton;
     [SerializeField] private GameObject cButton;
     [SerializeField] private GameObject dButton;
+    [SerializeField] private Slider slider;
+    [SerializeField] private GameObject confirmButton;
+    [SerializeField] private TextMeshProUGUI rangeText;
 
     // constants
     private const int MAX_HP = 100;
@@ -35,6 +38,7 @@ public class QuestionManager : MonoBehaviour
     private int bossHP = 100; // will be replaced by hash map size once implemented
     private bool answered;
     private float nextQuestionTimer;
+    private float rangeCenterGuess;
 
     // Start is called before the first frame update
     void Start()
@@ -54,6 +58,9 @@ public class QuestionManager : MonoBehaviour
         bButton.SetActive(false);
         cButton.SetActive(false);
         dButton.SetActive(false);
+        slider.gameObject.SetActive(false);
+        confirmButton.SetActive(false);
+        rangeText.gameObject.SetActive(false);
     }
 
     // Update is called once per frame 
@@ -73,9 +80,12 @@ public class QuestionManager : MonoBehaviour
                 bButton.SetActive(false);
                 cButton.SetActive(false);
                 dButton.SetActive(false);
+                slider.gameObject.SetActive(false);
+                confirmButton.SetActive(false);
+                rangeText.gameObject.SetActive(false);
 
                 // randomly select next question type
-                questionType = (QuestionType) Random.Range(0, 3);
+                questionType = (QuestionType) Random.Range(0, 4);
 
                 if (questionType == QuestionType.TrueFalse)
                 {
@@ -100,6 +110,9 @@ public class QuestionManager : MonoBehaviour
                     bButton.SetActive(false);
                     cButton.SetActive(false);
                     dButton.SetActive(false);
+                    slider.gameObject.SetActive(false);
+                    confirmButton.SetActive(false);
+                    rangeText.gameObject.SetActive(false);
                 }
                 else if(questionType == QuestionType.MultipleChoiceAlbum)
                 {
@@ -139,6 +152,9 @@ public class QuestionManager : MonoBehaviour
                     // disable all unrelated UI
                     trueButton.SetActive(false);
                     falseButton.SetActive(false);
+                    slider.gameObject.SetActive(false);
+                    confirmButton.SetActive(false);
+                    rangeText.gameObject.SetActive(false);
                 }
                 else if(questionType == QuestionType.MultipleChoiceArtist)
                 {
@@ -178,6 +194,9 @@ public class QuestionManager : MonoBehaviour
                     // disable all unrelated UI
                     trueButton.SetActive(false);
                     falseButton.SetActive(false);
+                    slider.gameObject.SetActive(false);
+                    confirmButton.SetActive(false);
+                    rangeText.gameObject.SetActive(false);
                 }
                 else if(questionType == QuestionType.DaneabilitySlider)
                 {
@@ -187,6 +206,14 @@ public class QuestionManager : MonoBehaviour
                     correctAnswer = 0.5f; // load from hash map entry
 
                     // activate confidence slider UI element 
+                    slider.gameObject.SetActive(true);
+                    confirmButton.SetActive(true);
+                    rangeText.gameObject.SetActive(true);
+                    slider.interactable = true;
+                    confirmButton.GetComponent<Button>().interactable = true;
+                    confirmButton.transform.GetChild(1).gameObject.SetActive(false);
+                    confirmButton.transform.GetChild(2).gameObject.SetActive(false);
+                    slider.value = 0.5f;
 
                     // disable all unrelated UI
                     trueButton.SetActive(false);
@@ -200,11 +227,22 @@ public class QuestionManager : MonoBehaviour
                 answered = false;
             }
         }
+        else if(questionType == QuestionType.DaneabilitySlider) // if question is still going, update text slider to appropriate current range
+        {
+            rangeCenterGuess = mapRange(slider.value, 0f, 1f, 0.1f, 0.9f); // map from slider scale to guess range scale
+            rangeText.SetText("Current Range: " + (rangeCenterGuess-0.1f).ToString("0.00") + "-" + (rangeCenterGuess + 0.1f).ToString("0.00"));
+        }
     }
 
     public float getHealthPercentage()
     {
         return (float) bossHP / MAX_HP;
+    }
+
+    // maps one range to another; see https://forum.unity.com/threads/re-map-a-number-from-one-range-to-another.119437/
+    private float mapRange(float val, float from1, float to1, float from2, float to2)
+    {
+        return (val - from1) / (to1 - from1) * (to2 - from2) + from2;
     }
 
     #region BUTTON PRESS FUNCTIONS
@@ -335,6 +373,41 @@ public class QuestionManager : MonoBehaviour
         bButton.transform.GetChild(1).gameObject.SetActive(false);
         cButton.transform.GetChild(1).gameObject.SetActive(false);
         dButton.transform.GetChild(1).gameObject.SetActive(false);
+    }
+
+    public void confirmPress()
+    {
+        answered = true;
+        nextQuestionTimer = 0;
+        confirmButton.GetComponent<Button>().interactable = false;
+        slider.interactable = false;
+
+        if (correctAnswer >= rangeCenterGuess - 0.1f && correctAnswer <= rangeCenterGuess + 0.1f)
+        {
+            bossHP -= HP_ON_CORRECT;
+            if (bossHP < 0)
+                bossHP = 0;
+
+            questionText.SetText("Good job! You just destroyed X tracks!");
+
+            // show check mark and show correct answer
+            confirmButton.transform.GetChild(2).gameObject.SetActive(true);
+            rangeText.SetText("Current Range: " + (rangeCenterGuess - 0.1f).ToString("0.00") + "-" + (rangeCenterGuess + 0.1f).ToString("0.00")
+            + "\n<color=green>Correct Answer: " + correctAnswer.ToString("0.00") +"</color>");
+        }
+        else
+        {
+            bossHP += HP_ON_INCORRECT;
+            if (bossHP > MAX_HP)
+                bossHP = MAX_HP; // ensures HP does not exceed max
+
+            questionText.SetText("Uh Oh! Y more tracks were just created!");
+
+            // show check mark and show incorrect answer
+            confirmButton.transform.GetChild(1).gameObject.SetActive(true);
+            rangeText.SetText("Current Range: " + (rangeCenterGuess - 0.1f).ToString("0.00") + "-" + (rangeCenterGuess + 0.1f).ToString("0.00")
+            + "\n<color=red>Correct Answer: " + correctAnswer.ToString("0.00") + "</color>");
+        }
     }
     #endregion
 }
