@@ -18,7 +18,8 @@ public class GameManager : MonoBehaviour
     }
     private SaveData data;
 
-    // Audio files
+    // Audio
+    [SerializeField] private AudioSource voiceAudioSource;
     [SerializeField] private AudioClip voice1;
     [SerializeField] private AudioClip voice2;
     [SerializeField] private AudioClip voice3;
@@ -58,7 +59,6 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start() // called only once at program boot-up (since duplicate GameManagers are destroyed in Awake())
     {
-        
     }
 
     // Update is called once per frame
@@ -114,6 +114,36 @@ public class GameManager : MonoBehaviour
     public void QuitGame()
     {
         Application.Quit();
+    }
+
+    #endregion
+
+    #region AUDIO FUNCTIONS
+
+    public void PlayRandomVoiceAudio()
+    {
+        if(!voiceAudioSource.isPlaying)
+        {
+            int rand = Random.Range(0, 5);
+            switch (rand)
+            {
+                case 0:
+                    voiceAudioSource.PlayOneShot(voice1);
+                    break;
+                case 1:
+                    voiceAudioSource.PlayOneShot(voice2);
+                    break;
+                case 2:
+                    voiceAudioSource.PlayOneShot(voice3);
+                    break;
+                case 3:
+                    voiceAudioSource.PlayOneShot(voice4);
+                    break;
+                case 4:
+                    voiceAudioSource.PlayOneShot(voice5);
+                    break;
+            }
+        }
     }
 
     #endregion

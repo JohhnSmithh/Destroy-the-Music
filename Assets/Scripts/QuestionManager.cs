@@ -61,6 +61,9 @@ public class QuestionManager : MonoBehaviour
         slider.gameObject.SetActive(false);
         confirmButton.SetActive(false);
         rangeText.gameObject.SetActive(false);
+
+        // announcer talks at start
+        GameManager.instance.PlayRandomVoiceAudio();
     }
 
     // Update is called once per frame 
@@ -73,6 +76,9 @@ public class QuestionManager : MonoBehaviour
             // load next random questiona after timer delay
             if(nextQuestionTimer > NEXT_QUESTION_DELAY)
             {
+                // announcer says next question
+                GameManager.instance.PlayRandomVoiceAudio();
+
                 // initialize all buttons to NOT active
                 trueButton.SetActive(false);
                 falseButton.SetActive(false);
@@ -258,6 +264,9 @@ public class QuestionManager : MonoBehaviour
 
     private void trueFalsePress(bool buttonType)
     {
+        // announcer says results
+        GameManager.instance.PlayRandomVoiceAudio();
+
         answered = true;
         nextQuestionTimer = 0;
         trueButton.GetComponent<Button>().interactable = false;
@@ -315,6 +324,9 @@ public class QuestionManager : MonoBehaviour
 
     private void multipleChoicePress(int letter)
     {
+        // announcer says results
+        GameManager.instance.PlayRandomVoiceAudio();
+
         answered = true;
         nextQuestionTimer = 0;
         aButton.GetComponent<Button>().interactable = false;
@@ -377,6 +389,9 @@ public class QuestionManager : MonoBehaviour
 
     public void confirmPress()
     {
+        // announcer says results
+        GameManager.instance.PlayRandomVoiceAudio();
+
         answered = true;
         nextQuestionTimer = 0;
         confirmButton.GetComponent<Button>().interactable = false;
