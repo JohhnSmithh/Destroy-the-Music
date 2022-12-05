@@ -13,12 +13,15 @@ public class ShadeOnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     // Unity variables
     private Image image;
+    private Button button;
 
     // Start is called before the first frame update
     void Start()
     {
         image = GetComponent<Image>();
         image.color = new Color(image.color.r, image.color.g, image.color.b, ALPHA_BASE); // set to initial base alpha value
+
+        button = GetComponent<Button>();
     }
 
     // Update is called once per frame
@@ -29,11 +32,13 @@ public class ShadeOnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        image.color = new Color(image.color.r, image.color.b, image.color.g, ALPHA_HOVER); // set ALPHA value (transparent highlight)
+        if(button.interactable)
+            image.color = new Color(image.color.r, image.color.b, image.color.g, ALPHA_HOVER); // set ALPHA value (transparent highlight)
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        image.color = new Color(image.color.r, image.color.b, image.color.g, ALPHA_BASE); // return to ALPHA_BASE state
+        if(button.interactable)
+            image.color = new Color(image.color.r, image.color.b, image.color.g, ALPHA_BASE); // return to ALPHA_BASE state
     }
 }

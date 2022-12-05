@@ -148,12 +148,16 @@ public class QuestionManager : MonoBehaviour
             bossHP -= HP_ON_CORRECT;
             if (bossHP < 0)
                 bossHP = 0;
+
+            questionText.SetText("Good job! You just destroyed X tracks!");
         }
         else
         {
             bossHP += HP_ON_INCORRECT;
             if (bossHP > MAX_HP)
                 bossHP = MAX_HP; // ensures HP does not exceed max
+
+            questionText.SetText("Uh Oh! Y more tracks were just created!");
         }
 
         // show check and x marks to show correct and incorrect answers

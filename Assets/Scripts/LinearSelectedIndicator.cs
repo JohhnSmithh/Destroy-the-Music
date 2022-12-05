@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class LinearSelectedIndicator : MonoBehaviour
 {
+    // Inspector variables
     [SerializeField] private GameObject indicator;
     [SerializeField] private bool isLinear;
 
     // Start is called before the first frame update
     void Start()
-    {
+    {     
         
     }
 
