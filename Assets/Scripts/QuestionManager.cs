@@ -18,11 +18,14 @@ public class QuestionManager : MonoBehaviour
     [SerializeField] private GameObject confirmButton;
     [SerializeField] private TextMeshProUGUI rangeText;
 
+    // Unity variables
+    private Animator announcerAnimator;
+
     // constants
     private const int MAX_HP = 100;
     private const int HP_ON_CORRECT = 10;
     private const int HP_ON_INCORRECT = 5;
-    private const float NEXT_QUESTION_DELAY = 5f;
+    private const float NEXT_QUESTION_DELAY = 3f;
     private const float FIRST_SCENE_DELAY = 1f;
 
     // variables
@@ -48,6 +51,9 @@ public class QuestionManager : MonoBehaviour
         answered = true;
         nextQuestionTimer = -FIRST_SCENE_DELAY; // creates additional delay on first dialogue
 
+        // unity variables
+        announcerAnimator = GameObject.Find("Announcer").GetComponent<Animator>();
+
         // set up text/dialogue for before any questions
         questionText.SetText("Welcome music haters to the most popular game show of all time, Destroy The Music! " +
             "Let's see what you've got as we move on to your first challenging question!");
@@ -65,6 +71,7 @@ public class QuestionManager : MonoBehaviour
 
         // announcer talks at start
         GameManager.instance.PlayRandomVoiceAudio();
+        announcerAnimator.SetTrigger("talk");
     }
 
     // Update is called once per frame 
@@ -79,6 +86,7 @@ public class QuestionManager : MonoBehaviour
             {
                 // announcer says next question
                 GameManager.instance.PlayRandomVoiceAudio();
+                announcerAnimator.SetTrigger("talk");
 
                 // initialize all buttons to NOT active
                 trueButton.SetActive(false);
@@ -245,6 +253,10 @@ public class QuestionManager : MonoBehaviour
             rangeCenterGuess = mapRange(slider.value, 0f, 1f, 0.1f, 0.9f); // map from slider scale to guess range scale
             rangeText.SetText("Current Range: " + (rangeCenterGuess-0.1f).ToString("0.00") + "-" + (rangeCenterGuess + 0.1f).ToString("0.00"));
         }
+
+        // set menu announcer to idle animation if not talking
+        if (!GameManager.instance.IsTalking())
+            announcerAnimator.SetTrigger("idle");
     }
 
     public float getHealthPercentage()
@@ -292,6 +304,9 @@ public class QuestionManager : MonoBehaviour
 
             // enable correct bubble
             questionText.transform.GetChild(2).gameObject.SetActive(true);
+
+            // announcer talk
+            announcerAnimator.SetTrigger("talk");
         }
         else
         {
@@ -303,6 +318,9 @@ public class QuestionManager : MonoBehaviour
 
             // enable incorrect bubble
             questionText.transform.GetChild(3).gameObject.SetActive(true);
+
+            // announcer shock
+            announcerAnimator.SetTrigger("shock");
         }
 
         // show check and x marks to show correct and incorrect answers
@@ -363,6 +381,9 @@ public class QuestionManager : MonoBehaviour
 
             // enable correct bubble
             questionText.transform.GetChild(2).gameObject.SetActive(true);
+
+            // announcer talk
+            announcerAnimator.SetTrigger("talk");
         }
         else
         {
@@ -374,6 +395,9 @@ public class QuestionManager : MonoBehaviour
 
             // enable incorrect bubble
             questionText.transform.GetChild(3).gameObject.SetActive(true);
+
+            // announcer shock
+            announcerAnimator.SetTrigger("shock");
         }
 
         // show check and x marks to show correct and incorrect answers
@@ -440,6 +464,9 @@ public class QuestionManager : MonoBehaviour
 
             // enable correct bubble
             questionText.transform.GetChild(2).gameObject.SetActive(true);
+
+            // announcer talk
+            announcerAnimator.SetTrigger("talk");
         }
         else
         {
@@ -456,6 +483,9 @@ public class QuestionManager : MonoBehaviour
 
             // enable incorrect bubble
             questionText.transform.GetChild(3).gameObject.SetActive(true);
+
+            // announcer shock
+            announcerAnimator.SetTrigger("shock");
         }
     }
     #endregion

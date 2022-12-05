@@ -122,28 +122,30 @@ public class GameManager : MonoBehaviour
 
     public void PlayRandomVoiceAudio()
     {
-        if(!voiceAudioSource.isPlaying)
+        int rand = Random.Range(0, 5);
+        switch (rand)
         {
-            int rand = Random.Range(0, 5);
-            switch (rand)
-            {
-                case 0:
-                    voiceAudioSource.PlayOneShot(voice1);
-                    break;
-                case 1:
-                    voiceAudioSource.PlayOneShot(voice2);
-                    break;
-                case 2:
-                    voiceAudioSource.PlayOneShot(voice3);
-                    break;
-                case 3:
-                    voiceAudioSource.PlayOneShot(voice4);
-                    break;
-                case 4:
-                    voiceAudioSource.PlayOneShot(voice5);
-                    break;
-            }
+            case 0:
+                voiceAudioSource.PlayOneShot(voice1);
+                break;
+            case 1:
+                voiceAudioSource.PlayOneShot(voice2);
+                break;
+            case 2:
+                voiceAudioSource.PlayOneShot(voice3);
+                break;
+            case 3:
+                voiceAudioSource.PlayOneShot(voice4);
+                break;
+            case 4:
+                voiceAudioSource.PlayOneShot(voice5);
+                break;
         }
+    }
+
+    public bool IsTalking()
+    {
+        return voiceAudioSource.isPlaying;
     }
 
     #endregion
