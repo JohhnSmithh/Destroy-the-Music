@@ -35,7 +35,7 @@ public class QuestionManager : MonoBehaviour
     }
     private QuestionType questionType;
     private float correctAnswer;
-    private int bossHP = 100; // will be replaced by hash map size once implemented
+    private int remainingSongs; // will be replaced by hash map size once implemented
     private bool answered;
     private float nextQuestionTimer;
     private float rangeCenterGuess;
@@ -44,6 +44,7 @@ public class QuestionManager : MonoBehaviour
     void Start()
     {
         // variables
+        remainingSongs = 100; // change when implementing hash map
         answered = true;
         nextQuestionTimer = -FIRST_SCENE_DELAY; // creates additional delay on first dialogue
 
@@ -242,7 +243,7 @@ public class QuestionManager : MonoBehaviour
 
     public float getHealthPercentage()
     {
-        return (float) bossHP / MAX_HP;
+        return (float) remainingSongs / MAX_HP;
     }
 
     // maps one range to another; see https://forum.unity.com/threads/re-map-a-number-from-one-range-to-another.119437/
@@ -274,17 +275,17 @@ public class QuestionManager : MonoBehaviour
 
         if (correctAnswer == (buttonType ? 1 : 0))
         {
-            bossHP -= HP_ON_CORRECT;
-            if (bossHP < 0)
-                bossHP = 0;
+            remainingSongs -= HP_ON_CORRECT;
+            if (remainingSongs < 0)
+                remainingSongs = 0;
 
             questionText.SetText("Good job! You just destroyed X tracks!");
         }
         else
         {
-            bossHP += HP_ON_INCORRECT;
-            if (bossHP > MAX_HP)
-                bossHP = MAX_HP; // ensures HP does not exceed max
+            remainingSongs += HP_ON_INCORRECT;
+            if (remainingSongs > MAX_HP)
+                remainingSongs = MAX_HP; // ensures HP does not exceed max
 
             questionText.SetText("Uh Oh! Y more tracks were just created!");
         }
@@ -336,17 +337,17 @@ public class QuestionManager : MonoBehaviour
 
         if (correctAnswer == letter)
         {
-            bossHP -= HP_ON_CORRECT;
-            if (bossHP < 0)
-                bossHP = 0;
+            remainingSongs -= HP_ON_CORRECT;
+            if (remainingSongs < 0)
+                remainingSongs = 0;
 
             questionText.SetText("Good job! You just destroyed X tracks!");
         }
         else
         {
-            bossHP += HP_ON_INCORRECT;
-            if (bossHP > MAX_HP)
-                bossHP = MAX_HP; // ensures HP does not exceed max
+            remainingSongs += HP_ON_INCORRECT;
+            if (remainingSongs > MAX_HP)
+                remainingSongs = MAX_HP; // ensures HP does not exceed max
 
             questionText.SetText("Uh Oh! Y more tracks were just created!");
         }
@@ -399,9 +400,9 @@ public class QuestionManager : MonoBehaviour
 
         if (correctAnswer >= rangeCenterGuess - 0.1f && correctAnswer <= rangeCenterGuess + 0.1f)
         {
-            bossHP -= HP_ON_CORRECT;
-            if (bossHP < 0)
-                bossHP = 0;
+            remainingSongs -= HP_ON_CORRECT;
+            if (remainingSongs < 0)
+                remainingSongs = 0;
 
             questionText.SetText("Good job! You just destroyed X tracks!");
 
@@ -412,9 +413,9 @@ public class QuestionManager : MonoBehaviour
         }
         else
         {
-            bossHP += HP_ON_INCORRECT;
-            if (bossHP > MAX_HP)
-                bossHP = MAX_HP; // ensures HP does not exceed max
+            remainingSongs += HP_ON_INCORRECT;
+            if (remainingSongs > MAX_HP)
+                remainingSongs = MAX_HP; // ensures HP does not exceed max
 
             questionText.SetText("Uh Oh! Y more tracks were just created!");
 
