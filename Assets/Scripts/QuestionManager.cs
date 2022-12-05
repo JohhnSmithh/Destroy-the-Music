@@ -46,6 +46,14 @@ public class QuestionManager : MonoBehaviour
         // set up text/dialogue for before any questions
         questionText.SetText("Welcome music haters to the most popular game show of all time, Destroy The Music! " +
             "Let's see what you've got as we move on to your first challenging question!");
+
+        // initialize all buttons to NOT active
+        trueButton.SetActive(false);
+        falseButton.SetActive(false);
+        aButton.SetActive(false);
+        bButton.SetActive(false);
+        cButton.SetActive(false);
+        dButton.SetActive(false);
     }
 
     // Update is called once per frame 
