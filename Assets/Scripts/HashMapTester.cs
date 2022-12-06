@@ -14,7 +14,7 @@ public class HashMapTester : MonoBehaviour
     void Start()
     {
         hashMap = new();
-        hashMap.Initialize("quadratic");
+        hashMap.Initialize(false);
     }
 
     //Prints it
@@ -63,8 +63,8 @@ public class HashMapTester : MonoBehaviour
     }
 
     //Changes the probe method
-    public void SetProbeMethod(string probeMethod)
+    public void SetProbeMethod(bool isLinear)
     {
-        hashMap.SetProbeMethod(probeMethod);
+        hashMap.SetProbeMethod(isLinear);
     }
 }

@@ -22,9 +22,9 @@ public class QuestionManager : MonoBehaviour
     private Animator announcerAnimator;
 
     // constants
-    private const int MAX_HP = 100;
-    private const int HP_ON_CORRECT = 10;
-    private const int HP_ON_INCORRECT = 5;
+    private const int MAX_HP = 125000;
+    private const int HP_ON_CORRECT = 10000;
+    private const int HP_ON_INCORRECT = 5000;
     private const float NEXT_QUESTION_DELAY = 3f;
     private const float FIRST_SCENE_DELAY = 1f;
 
@@ -38,16 +38,17 @@ public class QuestionManager : MonoBehaviour
     }
     private QuestionType questionType;
     private float correctAnswer;
-    private int remainingSongs; // will be replaced by hash map size once implemented
     private bool answered;
     private float nextQuestionTimer;
     private float rangeCenterGuess;
+
+    //HashMap
+    HashMap map = new();
 
     // Start is called before the first frame update
     void Start()
     {
         // variables
-        remainingSongs = 100; // change when implementing hash map
         answered = true;
         nextQuestionTimer = -FIRST_SCENE_DELAY; // creates additional delay on first dialogue
 
@@ -72,6 +73,9 @@ public class QuestionManager : MonoBehaviour
         // announcer talks at start
         GameManager.instance.PlayRandomVoiceAudio();
         announcerAnimator.SetTrigger("talk");
+
+        //Initialize the HashMap
+        map.Initialize(GameManager.instance.getIsLinear());
     }
 
     // Update is called once per frame 
@@ -261,7 +265,7 @@ public class QuestionManager : MonoBehaviour
 
     public float getHealthPercentage()
     {
-        return (float) remainingSongs / MAX_HP;
+        return (float) map.GetSize() / MAX_HP;
     }
 
     // maps one range to another; see https://forum.unity.com/threads/re-map-a-number-from-one-range-to-another.119437/
@@ -296,9 +300,7 @@ public class QuestionManager : MonoBehaviour
 
         if (correctAnswer == (buttonType ? 1 : 0))
         {
-            remainingSongs -= HP_ON_CORRECT;
-            if (remainingSongs < 0)
-                remainingSongs = 0;
+            map.RemoveX(HP_ON_CORRECT);
 
             // set question text in response to answer
             showQuestionRightText(HP_ON_CORRECT);
@@ -311,9 +313,7 @@ public class QuestionManager : MonoBehaviour
         }
         else
         {
-            remainingSongs += HP_ON_INCORRECT;
-            if (remainingSongs > MAX_HP)
-                remainingSongs = MAX_HP; // ensures HP does not exceed max
+            map.AddX(HP_ON_INCORRECT);
 
             // set question text in response to answer
             showQuestionWrongText(HP_ON_INCORRECT);
@@ -375,9 +375,7 @@ public class QuestionManager : MonoBehaviour
 
         if (correctAnswer == letter)
         {
-            remainingSongs -= HP_ON_CORRECT;
-            if (remainingSongs < 0)
-                remainingSongs = 0;
+            map.RemoveX(HP_ON_CORRECT);
 
             // set question text in response to answer
             showQuestionRightText(HP_ON_CORRECT);
@@ -390,9 +388,7 @@ public class QuestionManager : MonoBehaviour
         }
         else
         {
-            remainingSongs += HP_ON_INCORRECT;
-            if (remainingSongs > MAX_HP)
-                remainingSongs = MAX_HP; // ensures HP does not exceed max
+            map.AddX(HP_ON_INCORRECT);
 
             // set question text in response to answer
             showQuestionWrongText(HP_ON_INCORRECT);
@@ -455,9 +451,7 @@ public class QuestionManager : MonoBehaviour
 
         if (correctAnswer >= rangeCenterGuess - 0.1f && correctAnswer <= rangeCenterGuess + 0.1f)
         {
-            remainingSongs -= HP_ON_CORRECT;
-            if (remainingSongs < 0)
-                remainingSongs = 0;
+            map.RemoveX(HP_ON_CORRECT);
 
             // set question text in response to answer
             showQuestionRightText(HP_ON_CORRECT);
@@ -475,9 +469,7 @@ public class QuestionManager : MonoBehaviour
         }
         else
         {
-            remainingSongs += HP_ON_INCORRECT;
-            if (remainingSongs > MAX_HP)
-                remainingSongs = MAX_HP; // ensures HP does not exceed max
+            map.AddX(HP_ON_INCORRECT);
 
             // set question text in response to answer
             showQuestionWrongText(HP_ON_INCORRECT);

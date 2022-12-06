@@ -27,7 +27,7 @@ public class HashMap
     private int removeLine = 1;
 
     //Probing Type
-    string probeMethod = "quadratic";
+    bool isLinear = false;
 
     //Debug Vars
     private int skipped = 0;
@@ -35,7 +35,7 @@ public class HashMap
 
 
     //Initialize the HashMap
-    public void Initialize(string probeMethod)
+    public void Initialize(bool isLinear)
     {
         hashTable = new Song[maxSize];
 
@@ -46,7 +46,7 @@ public class HashMap
         AddX(100000);
 
         //Set the probing method
-        this.probeMethod = probeMethod;
+        this.isLinear = isLinear;
 
     }
 
@@ -128,7 +128,7 @@ public class HashMap
     {
         //Find the position to insert
         int pos = 0;
-        if (this.probeMethod == "linear") pos = FindAddPosLinear(key);
+        if (this.isLinear) pos = FindAddPosLinear(key);
         else pos = FindAddPosQuadratic(key);
 
         //Increase the size only if its a new entry or gravestone
@@ -148,7 +148,7 @@ public class HashMap
     public void Remove(string key)
     {
         int idx = 0;
-        if (this.probeMethod == "linear") idx = FindKeyPosLinear(key);
+        if (this.isLinear) idx = FindKeyPosLinear(key);
         else idx = FindKeyPosQuadratic(key);
 
         //Do stuff if it was found
@@ -213,6 +213,12 @@ public class HashMap
         }
         
         return hashTable[idx];
+    }
+
+    //Returns the current size
+    public int GetSize()
+    {
+        return currSize;
     }
 
 
@@ -370,7 +376,7 @@ public class HashMap
     public void DebugPrint()
     {
         Debug.Log("Current Size is " + currSize + ", Max Size is " + maxSize + ", Number of Songs Skipped is " + skipped + ", Number of Gravestones is " + graves);
-        Debug.Log("Probing Method is " + probeMethod + ", Current Load Factor is " + (((double)currSize + (double)graves)/ (double)maxSize) + ", Max Load Factor is " + maxLoadFactor);
+        Debug.Log("Is Linear: " + isLinear + ", Current Load Factor is " + (((double)currSize + (double)graves)/ (double)maxSize) + ", Max Load Factor is " + maxLoadFactor);
     }
 
     //Prints the next prime
@@ -397,9 +403,9 @@ public class HashMap
     }
 
     //Sets the probe method (never going to be used in the actual game)
-    public void SetProbeMethod(string probeMethod)
+    public void SetProbeMethod(bool isLinear)
     {
-        this.probeMethod = probeMethod;
+        this.isLinear = isLinear;
     }
     #endregion
 }
