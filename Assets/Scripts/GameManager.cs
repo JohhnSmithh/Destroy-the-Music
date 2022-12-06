@@ -7,6 +7,9 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
 
+    // constants
+    private float MAX_MUSIC_VOLUME = 0.5f;
+
     // instance
     public static GameManager instance;
 
@@ -25,6 +28,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private AudioClip voice3;
     [SerializeField] private AudioClip voice4;
     [SerializeField] private AudioClip voice5;
+    [SerializeField] private AudioSource musicAudioSource;
+    [SerializeField] private AudioClip music;
 
     #region UNITY FUNCTIONS
 
@@ -59,12 +64,19 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start() // called only once at program boot-up (since duplicate GameManagers are destroyed in Awake())
     {
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        // make music loop
+        if (!musicAudioSource.isPlaying)
+            musicAudioSource.PlayOneShot(music);
+
+        // set volume back to max in main menu
+        if(SceneManager.GetActiveScene().name == "MenuScene")
+            musicAudioSource.volume = MAX_MUSIC_VOLUME;
     }
 
     private void OnApplicationQuit()
@@ -146,6 +158,18 @@ public class GameManager : MonoBehaviour
     public bool IsTalking()
     {
         return voiceAudioSource.isPlaying;
+    }
+
+    // input volume is on a scale of 0 to 1, which is remapped to the scale being used
+    public void setMusicVolume(float volume)
+    {
+        musicAudioSource.volume = mapRange(volume, 0, 1, 0, MAX_MUSIC_VOLUME);
+    }
+
+    // maps one range to another; see https://forum.unity.com/threads/re-map-a-number-from-one-range-to-another.119437/
+    private float mapRange(float val, float from1, float to1, float from2, float to2)
+    {
+        return (val - from1) / (to1 - from1) * (to2 - from2) + from2;
     }
 
     #endregion

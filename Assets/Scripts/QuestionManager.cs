@@ -261,6 +261,9 @@ public class QuestionManager : MonoBehaviour
         // set menu announcer to idle animation if not talking
         if (!GameManager.instance.IsTalking())
             announcerAnimator.SetTrigger("idle");
+
+        // set volume level
+        GameManager.instance.setMusicVolume(getHealthPercentage());
     }
 
     public float getHealthPercentage()
