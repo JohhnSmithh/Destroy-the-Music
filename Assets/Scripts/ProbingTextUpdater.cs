@@ -6,7 +6,7 @@ using TMPro;
 public class ProbingTextUpdater : MonoBehaviour
 {
     // constants
-    private const float redCutoff = 0.01f;
+    private const float redCutoff = 0.007f;
     private const float delay = 0.2f;
 
     // Unity variables

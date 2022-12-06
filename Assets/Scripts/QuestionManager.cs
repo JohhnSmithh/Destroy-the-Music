@@ -44,6 +44,7 @@ public class QuestionManager : MonoBehaviour
     private float rangeCenterGuess;
     private bool gameDone;
     private float gameDoneTimer;
+    private bool lastQuestionCorrect;
 
     //HashMap
     HashMap map = new();
@@ -56,6 +57,7 @@ public class QuestionManager : MonoBehaviour
         nextQuestionTimer = -FIRST_SCENE_DELAY; // creates additional delay on first dialogue
         gameDone = false;
         gameDoneTimer = 0;
+        lastQuestionCorrect = false;
 
         // unity variables
         announcerAnimator = GameObject.Find("Announcer").GetComponent<Animator>();
@@ -363,7 +365,7 @@ public class QuestionManager : MonoBehaviour
 
     public float getAvgOperationTime()
     {
-        return (float) map.GetAvgRuntime();
+        return lastQuestionCorrect ? (float) map.GetLastRemoveRuntime() : (float) map.GetLastAddRuntime();
     }
 
     #region BUTTON PRESS FUNCTIONS
@@ -402,6 +404,8 @@ public class QuestionManager : MonoBehaviour
 
             // announcer talk
             announcerAnimator.SetTrigger("talk");
+
+            lastQuestionCorrect = true;
         }
         else
         {
@@ -415,6 +419,8 @@ public class QuestionManager : MonoBehaviour
 
             // announcer shock
             announcerAnimator.SetTrigger("shock");
+
+            lastQuestionCorrect = false;
         }
 
         // show check and x marks to show correct and incorrect answers
@@ -477,6 +483,8 @@ public class QuestionManager : MonoBehaviour
 
             // announcer talk
             announcerAnimator.SetTrigger("talk");
+
+            lastQuestionCorrect = true;
         }
         else
         {
@@ -490,6 +498,8 @@ public class QuestionManager : MonoBehaviour
 
             // announcer shock
             announcerAnimator.SetTrigger("shock");
+
+            lastQuestionCorrect = false;
         }
 
         // show check and x marks to show correct and incorrect answers
@@ -558,6 +568,8 @@ public class QuestionManager : MonoBehaviour
 
             // announcer talk
             announcerAnimator.SetTrigger("talk");
+
+            lastQuestionCorrect = true;
         }
         else
         {
@@ -576,6 +588,8 @@ public class QuestionManager : MonoBehaviour
 
             // announcer shock
             announcerAnimator.SetTrigger("shock");
+
+            lastQuestionCorrect = false;
         }
     }
 

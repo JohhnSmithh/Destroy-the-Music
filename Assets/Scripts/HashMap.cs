@@ -13,7 +13,7 @@ public class HashMap
     private int maxSize = 3;
 
     //Max Load Factor
-    private double maxLoadFactor = 0.5;
+    private double maxLoadFactor = 0.75;
 
     //Hash Tabel array
     private Song[] hashTable;

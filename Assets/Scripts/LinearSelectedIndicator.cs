@@ -7,7 +7,7 @@ public class LinearSelectedIndicator : MonoBehaviour
 {
     // constants
     private const float SELECTED_ALPHA = 1f;
-    private const float UNSELECTED_ALPHA = 0.75f;
+    private const float UNSELECTED_ALPHA = 0.6f;
 
     // Inspector variables
     [SerializeField] private bool isLinear;
