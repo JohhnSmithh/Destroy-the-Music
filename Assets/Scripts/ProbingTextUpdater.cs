@@ -26,7 +26,7 @@ public class ProbingTextUpdater : MonoBehaviour
     {
         // render probing method stored in game manager and make operation time is above red cutoff threshold
         text.SetText("<u>Probing Method</u>:\n" + (GameManager.instance.getIsLinear() ? "Linear" : "Quadratic")
-        + "\n<u>Avg Time/Operation</u>:\n" + (questionManager.getAvgOperationTime() > redCutoff ? 
-        "<color=red>" + questionManager.getAvgOperationTime().ToString("0.0000") + "</color>" : questionManager.getAvgOperationTime().ToString("0.0000")));
+        + "\n<u>Avg Runtime</u>:\n" + (questionManager.getAvgOperationTime() > redCutoff ? 
+        "<color=red>" + questionManager.getAvgOperationTime().ToString("0.0000") + " ms</color>" : questionManager.getAvgOperationTime().ToString("0.0000") + " ms"));
     }
 }
