@@ -32,6 +32,10 @@ public class HashMap
     //Debug Vars
     private int skipped = 0;
     private int graves = 0;
+    private double totalAddRuntime = 0;
+    private double totalRemoveRuntime = 0;
+    private int totalAdded = 0;
+    private int totalRemoved = 0;
 
 
     //Initialize the HashMap
@@ -91,6 +95,10 @@ public class HashMap
 
         //Display number of elements added
         Debug.Log("Added " + added + " Songs, Execution Time: " + watch.ElapsedMilliseconds + "ms, Average Time per Insertion: " + watch.ElapsedMilliseconds / (double)added + "ms");
+
+        //Add to the running average
+        totalAdded += added;
+        totalAddRuntime += watch.ElapsedMilliseconds;
     }
 
     //Remove x elements to the hashtable
@@ -121,6 +129,10 @@ public class HashMap
 
         //Display number of elements removed
         Debug.Log("Removed " + removed + " Songs, Execution Time: " + watch.ElapsedMilliseconds + "ms, Average Time per Deletion: " + watch.ElapsedMilliseconds / (double)removed + "ms");
+
+        //Add to the running average
+        totalRemoved += removed;
+        totalRemoveRuntime += watch.ElapsedMilliseconds;
     }
 
     //Add a specific item
@@ -174,6 +186,17 @@ public class HashMap
     public List<Song> GetRandomSongs()
     {
         List<Song> songs = new List<Song>();
+
+        //Can't return 4 songs if there aren't 4 songs
+        if(currSize < 4)
+        {
+            songs.Add(new Song());
+            songs.Add(new Song());
+            songs.Add(new Song());
+            songs.Add(new Song());
+            return songs;
+        }
+
         int idx = UnityEngine.Random.Range(0, maxSize);
 
         for (int i = 0; i < 4; i++)
@@ -200,6 +223,10 @@ public class HashMap
     //Gets a song
     public Song GetRandomSong()
     {
+        //Can't get a random song if there is no song
+        if (currSize <= 0)
+            return new Song();
+
         int idx = UnityEngine.Random.Range(0, maxSize);
 
         //Find the next index that contains a value
@@ -219,6 +246,24 @@ public class HashMap
     public int GetSize()
     {
         return currSize;
+    }
+
+    //Returns the running average of add operations
+    public double GetAddAvgRuntime()
+    {
+        return totalAddRuntime / totalAdded;
+    }
+
+    //Returns the running average of remove operations
+    public double GetRemoveAvgRuntime()
+    {
+        return totalRemoveRuntime / totalRemoved;
+    }
+
+    //Returns the running average of all operations
+    public double GetAvgRuntime()
+    {
+        return (totalAddRuntime + totalRemoveRuntime) / (totalAdded + totalRemoved);
     }
 
 
