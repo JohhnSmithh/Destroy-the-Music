@@ -23,7 +23,7 @@ public class QuestionManager : MonoBehaviour
 
     // constants
     private const int MAX_HP = 125000;
-    private const int HP_ON_CORRECT = 10000;
+    private const int HP_ON_CORRECT = 20000;
     private const int HP_ON_INCORRECT = 5000;
     private const float NEXT_QUESTION_DELAY = 3f;
     private const float FIRST_SCENE_DELAY = 6f;
@@ -119,11 +119,13 @@ public class QuestionManager : MonoBehaviour
 
                 if (questionType == QuestionType.TrueFalse)
                 {
+                    Song song = map.GetRandomSong();
+
                     // Set Question Text
-                    questionText.SetText("True or False? The following song is explicit: ");
+                    questionText.SetText("The following song is <b>explicit</b>. True or False?: <b>" + song.getName() + "</b>");
 
                     // 1 indicates true, 0 indicates false
-                    correctAnswer = 1; // replace with reading from random song from hash map object
+                    correctAnswer = song.isExplicit() ? 1 : 0; // replace with reading from random song from hash map object
 
                     // activate true/false buttons
                     trueButton.SetActive(true);
@@ -146,16 +148,19 @@ public class QuestionManager : MonoBehaviour
                 }
                 else if(questionType == QuestionType.MultipleChoiceAlbum)
                 {
-                    // Set Question Text
-                    questionText.SetText("What is the Album name for the following song: ");
+                    // get 4 songs
+                    List<Song> songs = map.GetRandomSongs();
 
                     // 0 is a, 1 is b, 2 is c, and 3 is d
-                    correctAnswer = 0; // load from hash map entry
+                    correctAnswer = Random.Range(0, 4);
 
-                    aButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText("Album A"); // load from hash map entry
-                    bButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText("Album B"); // load from hash map entry
-                    cButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText("Album C"); // load from hash map entry
-                    dButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText("Album D"); // load from hash map entry
+                    // Set Question Text
+                    questionText.SetText("What is the <b>Album</b> name for the following song: <b>" + songs[(int)correctAnswer].getName() + "</b>");
+
+                    aButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(songs[0].getAlbum()); // load from hash map entry
+                    bButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(songs[1].getAlbum()); // load from hash map entry
+                    cButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(songs[2].getAlbum()); // load from hash map entry
+                    dButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(songs[3].getAlbum()); // load from hash map entry
 
                     // activate multiple choice buttons and
                     aButton.SetActive(true);
@@ -188,16 +193,19 @@ public class QuestionManager : MonoBehaviour
                 }
                 else if(questionType == QuestionType.MultipleChoiceArtist)
                 {
-                    // Set Question Text
-                    questionText.SetText("What is the Artist name for the following song: ");
+                    // get 4 songs
+                    List<Song> songs = map.GetRandomSongs();
 
                     // 0 is a, 1 is b, 2 is c, and 3 is d
-                    correctAnswer = 0; // load from hash map entry
+                    correctAnswer = Random.Range(0, 4);
 
-                    aButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText("Artist A"); // load from hash map entry
-                    bButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText("Artist B"); // load from hash map entry
-                    cButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText("Artist C"); // load from hash map entry
-                    dButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText("Artist D"); // load from hash map entry
+                    // Set Question Text
+                    questionText.SetText("What is the <b>Artist</b> name for the following song: <b>" + songs[(int)correctAnswer].getName() + "</b>");
+
+                    aButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(songs[0].getArtist()); // load from hash map entry
+                    bButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(songs[1].getArtist()); // load from hash map entry
+                    cButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(songs[2].getArtist()); // load from hash map entry
+                    dButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(songs[3].getArtist()); // load from hash map entry
 
                     // activate multiple choice buttons and
                     aButton.SetActive(true);
@@ -230,10 +238,13 @@ public class QuestionManager : MonoBehaviour
                 }
                 else if(questionType == QuestionType.DaneabilitySlider)
                 {
-                    // Set Question Text
-                    questionText.SetText("Make your best guess at the danceability of the following song: ");
+                    // get one song
+                    Song song = map.GetRandomSong();
 
-                    correctAnswer = 0.5f; // load from hash map entry
+                    // Set Question Text
+                    questionText.SetText("Make your best guess at the <b>danceability</b> of the following song: <b>" + song.getName() + "</b>");
+
+                    correctAnswer = (float) song.getDanceability(); // load correct answer from hash map entry
 
                     // activate confidence slider UI element 
                     slider.gameObject.SetActive(true);
