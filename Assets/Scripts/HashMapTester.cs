@@ -26,26 +26,21 @@ public class HashMapTester : MonoBehaviour
     }
 
     //Add 1 Element
-    public void AddOne()
+    public void AddSome()
     {
-        /*List<Song> list = new List<Song>();
-        list.Add(new Song("0001Lyv0YTjkZSqzT4WkLy", "Eye of the Hurricane", "Fire in the Sky", "Half Japanese", false, 0.49));
-        list.Add(new Song("0001Wtl60puR26ZtSDIF66", "Shikestei Fars", "Secret Museum Of Mankind Vol. 5: Ethnic Music Classics 1925-48", "Khan Sushinksky", false, 0.29600000000000004));
-        list.Add(new Song("0006YMdmPphDXTlUBHGr6Q", "Bent Finger Boogie", "Puzzle", "Matt Gray", false, 0.499));
-        list.Add(new Song("0007ViJ9W2YqgQX7zDic82", "Ceremony II (\"Incantations\")", "From Behind the Unreasoning Mask", "Paul Chihara", false, 0.139));
-
-        int rand = Random.Range(0, 4 );
-        hashMap.Add(list[rand].getID(), list[rand]);
-
-        Debug.Log(list[rand].getName() + " was added!");*/
-
-        hashMap.AddX(2);
-        
+        hashMap.AddX(50000);
     }
 
     //Remove 1 Element
-    public void RemoveOne()
+    public void RemoveSome()
     {
-        hashMap.DebugNextPrime(7);
+        hashMap.Remove("1LP5MfZ4SY8n61NtJ6joBP");
+        hashMap.Remove("21dGdGBsiCHMWgjAk9dZTQ");
+    }
+
+    //Debug Prime
+    public void PrintNextPrime()
+    {
+        hashMap.DebugNextPrime(Random.Range(1,200000));
     }
 }

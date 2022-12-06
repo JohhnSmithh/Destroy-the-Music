@@ -9,7 +9,7 @@ using UnityEngine;
 public class HashMap
 {
     //Starting size
-    private int maxSize = 3;
+    private int maxSize = 100003;
 
     //Max Load Factor
     private double maxLoadFactor = 0.5;
@@ -20,22 +20,58 @@ public class HashMap
     //Load factor, number of current elements, and the like
     private int currSize = 0;
 
+    //Data stuff
+    string[] dataLines;
+    int currLine = 1;
+
+    //Probing Type
+
+
+    //Debug Vars
+    int skipped = 0;
+
 
     //Initialize the HashMap
     public void Initialize()
     {
         hashTable = new Song[maxSize];
+
+        //Read the data for later acces
+        dataLines = File.ReadAllLines("Assets/DataSet/tracks_features.csv");
+
+        //Add the initial 100000
+        //AddX(100000);
+
     }
 
     //Add x elements to the hashtable from the dataset
     public void AddX(int x)
     {
-        //Read from file
-        string[] lines = File.ReadLines("Assets/DataSet/tracks_features.csv").Take(x).ToArray();
+        for (int i = currLine; i < currLine + x; i++)
+        {
+            string[] elements = dataLines[i].Split(',');
+            //Debug.Log("Length: " + elements.Length + " " + elements[0] + " " + elements[1] + " " + elements[2] + " " + elements[4] + " " + elements[8] + " " + elements[9]);
 
-        foreach (string line in lines)
-            Debug.Log(line);
+            //Only do stuff if the lines are valid when delimited
+            if (elements.Length == 24)
+            {
+                //Find if it's explicit
+                bool ex = false;
+                if (elements[8] == "True")
+                    ex = true;
 
+                //Add the file elements to the hash map
+                Add(elements[0], new Song(elements[0], elements[1], elements[2], elements[4], ex, Double.Parse(elements[9])));
+            }
+            else
+                skipped++;
+        }
+
+        //Increase the current line so we don't read them twice
+        currLine += x;
+
+        //Debug Successful
+        Debug.Log("Successfully Added " + x + " Elements");
     }
 
     //Remove x elements to the hashtable
@@ -48,10 +84,10 @@ public class HashMap
     public void Add(string key, Song song)
     {
         //Find the position to insert
-        int pos = FindPositionLinear(key);
+        int pos = FindAddPosLinear(key);
 
-        //Increase the size only if its a new entry
-        if(hashTable[pos] == null)
+        //Increase the size only if its a new entry or gravestone
+        if(hashTable[pos] == null || hashTable[pos].getID() == "")
             currSize++;
 
         //Add the song in the appropriate location
@@ -63,16 +99,25 @@ public class HashMap
 
     }
 
-    //Remove a specific item
+    //Remove a specific key
     public void Remove(string key)
     {
-
+        int idx = FindKeyPosLinear(key);
+        Debug.Log(idx + ": " + key + " " + hashTable[idx].getID() + " " + hashTable[idx].getName());
     }
 
-    /*==== PRIVATE HELPER FUNCTIONS ====*/
+    //Remove a specific indx
+    public void Remove(int idx)
+    {
+        if(idx < maxSize && hashTable[idx] != null)
+            hashTable[idx] = new Song();
+    }
 
-    //Find position for a key linearly
-    private int FindPositionLinear(string key)
+
+    #region PRIVATE HELPER FUNCTIONS
+
+    //Find position for a key linearly (for insertion)
+    private int FindAddPosLinear(string key)
     {
         int pos = Hash(key);
 
@@ -88,6 +133,30 @@ public class HashMap
 
         return pos;
     }
+
+    //Find position for a key linearly (for deletion and search)
+    //Returns -1 if we couldn't find it
+    private int FindKeyPosLinear(string key)
+    {
+        int pos = Hash(key);
+
+        //Go through array until we find it (or until a null)
+        while(hashTable[pos] != null && hashTable[pos].getID() != "" && hashTable[pos].getID() != key)
+        {
+            pos++;
+
+            //Check if we exceeded the size
+            if (pos >= maxSize)
+                pos -= maxSize;
+        }
+
+        //Check if we couldn't find it
+        if (hashTable[pos] == null)
+            return -1;
+
+        return pos;
+    }
+
 
     //Hash Function
     private int Hash(string key)
@@ -109,8 +178,8 @@ public class HashMap
         //Rehash / add everything
         for(int i = 0; i < tempArray.Length; i++)
         {
-            //If there be a value, add it to the new array
-            if (tempArray[i] != null)
+            //If there be a value, add it to the new array (don't add the gravestones)
+            if (tempArray[i] != null && tempArray[i].getID() != "")
                 Add(tempArray[i].getID(), tempArray[i]);
         }
     }
@@ -145,22 +214,14 @@ public class HashMap
 
         return -1;
     }
+    #endregion
 
-    /*==== DEBUG FUNCTIONS ====*/
+    #region DEBUG FUNCTIONS
 
     //Prints the array
     public void DebugPrint()
     {
-        Debug.Log("Current Size is " + currSize + " Max Size is " + maxSize);
-
-        for(int i = 0; i < hashTable.Length; i++)
-        {
-            if (hashTable[i] == null)
-                Debug.Log("Yeah " + i + " be null");
-            else
-                Debug.Log(i + " " + hashTable[i].getID() + " " + hashTable[i].getName());
-        }
-        
+        Debug.Log("Current Size is " + currSize + ", Max Size is " + maxSize + ", Number of Songs Skipped is " + skipped); 
     }
 
     //Prints the next prime
@@ -168,4 +229,5 @@ public class HashMap
     {
         Debug.Log("Next prime after " + n + " is " + NextPrime(n));
     }
+    #endregion
 }
