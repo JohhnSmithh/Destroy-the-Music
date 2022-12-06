@@ -26,7 +26,7 @@ public class QuestionManager : MonoBehaviour
     private const int HP_ON_CORRECT = 10000;
     private const int HP_ON_INCORRECT = 5000;
     private const float NEXT_QUESTION_DELAY = 3f;
-    private const float FIRST_SCENE_DELAY = 1f;
+    private const float FIRST_SCENE_DELAY = 6f;
 
     // variables
     private enum QuestionType
@@ -56,8 +56,13 @@ public class QuestionManager : MonoBehaviour
         announcerAnimator = GameObject.Find("Announcer").GetComponent<Animator>();
 
         // set up text/dialogue for before any questions
-        questionText.SetText("Don’t cue it up, or I’ll get sick, because tonight we’re going to DESTROY THE MUSIC! " +
-            "Welcome back, music haters - let’s give our new contestant some questions!");
+        int tempRand = Random.Range(0, 2);
+        if (tempRand == 0)
+            questionText.SetText("Don’t cue it up, or I’ll get sick, because tonight we’re going to DESTROY THE MUSIC! Welcome back, music haters - " +
+                "let’s give our new contestant some questions right away so we can turn that background music off!");
+        else
+            questionText.SetText("It’s time to stop the showtunes, it’s time to kill the lights - it’s time to DESTROY THE MUSIC on our game show tonight! Welcome back, music haters - " +
+                "let’s give our new contestant some questions right away so we can turn that background music off!");
 
         // initialize all buttons to NOT active
         trueButton.SetActive(false);
