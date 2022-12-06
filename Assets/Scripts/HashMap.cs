@@ -302,7 +302,7 @@ public class HashMap
 
             //Check if we exceeded the size
             if (pos >= maxSize)
-                pos -= maxSize;
+                pos = pos % maxSize;
         }
 
         return pos;
@@ -346,7 +346,7 @@ public class HashMap
 
             //Check if we exceeded the size
             if (pos >= maxSize)
-                pos -= maxSize;
+                pos = pos % maxSize;
         }
 
         //Check if we couldn't find it
