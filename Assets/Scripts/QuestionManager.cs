@@ -14,12 +14,18 @@ public class QuestionManager : MonoBehaviour
     [SerializeField] private GameObject bButton;
     [SerializeField] private GameObject cButton;
     [SerializeField] private GameObject dButton;
+    [SerializeField] private Slider slider;
+    [SerializeField] private GameObject confirmButton;
+    [SerializeField] private TextMeshProUGUI rangeText;
+
+    // Unity variables
+    private Animator announcerAnimator;
 
     // constants
     private const int MAX_HP = 100;
     private const int HP_ON_CORRECT = 10;
     private const int HP_ON_INCORRECT = 5;
-    private const float NEXT_QUESTION_DELAY = 5f;
+    private const float NEXT_QUESTION_DELAY = 3f;
     private const float FIRST_SCENE_DELAY = 1f;
 
     // variables
@@ -32,20 +38,25 @@ public class QuestionManager : MonoBehaviour
     }
     private QuestionType questionType;
     private float correctAnswer;
-    private int bossHP = 100; // will be replaced by hash map size once implemented
+    private int remainingSongs; // will be replaced by hash map size once implemented
     private bool answered;
     private float nextQuestionTimer;
+    private float rangeCenterGuess;
 
     // Start is called before the first frame update
     void Start()
     {
         // variables
+        remainingSongs = 100; // change when implementing hash map
         answered = true;
         nextQuestionTimer = -FIRST_SCENE_DELAY; // creates additional delay on first dialogue
 
+        // unity variables
+        announcerAnimator = GameObject.Find("Announcer").GetComponent<Animator>();
+
         // set up text/dialogue for before any questions
-        questionText.SetText("Welcome music haters to the most popular game show of all time, Destroy The Music! " +
-            "Let's see what you've got as we move on to your first challenging question!");
+        questionText.SetText("Don’t cue it up, or I’ll get sick, because tonight we’re going to DESTROY THE MUSIC! " +
+            "Welcome back, music haters - let’s give our new contestant some questions!");
 
         // initialize all buttons to NOT active
         trueButton.SetActive(false);
@@ -54,6 +65,13 @@ public class QuestionManager : MonoBehaviour
         bButton.SetActive(false);
         cButton.SetActive(false);
         dButton.SetActive(false);
+        slider.gameObject.SetActive(false);
+        confirmButton.SetActive(false);
+        rangeText.gameObject.SetActive(false);
+
+        // announcer talks at start
+        GameManager.instance.PlayRandomVoiceAudio();
+        announcerAnimator.SetTrigger("talk");
     }
 
     // Update is called once per frame 
@@ -66,6 +84,10 @@ public class QuestionManager : MonoBehaviour
             // load next random questiona after timer delay
             if(nextQuestionTimer > NEXT_QUESTION_DELAY)
             {
+                // announcer says next question
+                GameManager.instance.PlayRandomVoiceAudio();
+                announcerAnimator.SetTrigger("talk");
+
                 // initialize all buttons to NOT active
                 trueButton.SetActive(false);
                 falseButton.SetActive(false);
@@ -73,9 +95,18 @@ public class QuestionManager : MonoBehaviour
                 bButton.SetActive(false);
                 cButton.SetActive(false);
                 dButton.SetActive(false);
+                slider.gameObject.SetActive(false);
+                confirmButton.SetActive(false);
+                rangeText.gameObject.SetActive(false);
+
+                // reset to proper text box texture
+                questionText.transform.GetChild(1).gameObject.SetActive(false);
+                questionText.transform.GetChild(2).gameObject.SetActive(true);
+                questionText.transform.GetChild(3).gameObject.SetActive(false);
+                questionText.transform.GetChild(4).gameObject.SetActive(false);
 
                 // randomly select next question type
-                questionType = (QuestionType) Random.Range(0, 3);
+                questionType = (QuestionType) Random.Range(0, 4);
 
                 if (questionType == QuestionType.TrueFalse)
                 {
@@ -100,6 +131,9 @@ public class QuestionManager : MonoBehaviour
                     bButton.SetActive(false);
                     cButton.SetActive(false);
                     dButton.SetActive(false);
+                    slider.gameObject.SetActive(false);
+                    confirmButton.SetActive(false);
+                    rangeText.gameObject.SetActive(false);
                 }
                 else if(questionType == QuestionType.MultipleChoiceAlbum)
                 {
@@ -139,6 +173,9 @@ public class QuestionManager : MonoBehaviour
                     // disable all unrelated UI
                     trueButton.SetActive(false);
                     falseButton.SetActive(false);
+                    slider.gameObject.SetActive(false);
+                    confirmButton.SetActive(false);
+                    rangeText.gameObject.SetActive(false);
                 }
                 else if(questionType == QuestionType.MultipleChoiceArtist)
                 {
@@ -178,6 +215,9 @@ public class QuestionManager : MonoBehaviour
                     // disable all unrelated UI
                     trueButton.SetActive(false);
                     falseButton.SetActive(false);
+                    slider.gameObject.SetActive(false);
+                    confirmButton.SetActive(false);
+                    rangeText.gameObject.SetActive(false);
                 }
                 else if(questionType == QuestionType.DaneabilitySlider)
                 {
@@ -187,6 +227,14 @@ public class QuestionManager : MonoBehaviour
                     correctAnswer = 0.5f; // load from hash map entry
 
                     // activate confidence slider UI element 
+                    slider.gameObject.SetActive(true);
+                    confirmButton.SetActive(true);
+                    rangeText.gameObject.SetActive(true);
+                    slider.interactable = true;
+                    confirmButton.GetComponent<Button>().interactable = true;
+                    confirmButton.transform.GetChild(1).gameObject.SetActive(false);
+                    confirmButton.transform.GetChild(2).gameObject.SetActive(false);
+                    slider.value = 0.5f;
 
                     // disable all unrelated UI
                     trueButton.SetActive(false);
@@ -200,11 +248,26 @@ public class QuestionManager : MonoBehaviour
                 answered = false;
             }
         }
+        else if(questionType == QuestionType.DaneabilitySlider) // if question is still going, update text slider to appropriate current range
+        {
+            rangeCenterGuess = mapRange(slider.value, 0f, 1f, 0.1f, 0.9f); // map from slider scale to guess range scale
+            rangeText.SetText("Current Range: " + (rangeCenterGuess-0.1f).ToString("0.00") + "-" + (rangeCenterGuess + 0.1f).ToString("0.00"));
+        }
+
+        // set menu announcer to idle animation if not talking
+        if (!GameManager.instance.IsTalking())
+            announcerAnimator.SetTrigger("idle");
     }
 
     public float getHealthPercentage()
     {
-        return (float) bossHP / MAX_HP;
+        return (float) remainingSongs / MAX_HP;
+    }
+
+    // maps one range to another; see https://forum.unity.com/threads/re-map-a-number-from-one-range-to-another.119437/
+    private float mapRange(float val, float from1, float to1, float from2, float to2)
+    {
+        return (val - from1) / (to1 - from1) * (to2 - from2) + from2;
     }
 
     #region BUTTON PRESS FUNCTIONS
@@ -220,6 +283,12 @@ public class QuestionManager : MonoBehaviour
 
     private void trueFalsePress(bool buttonType)
     {
+        // announcer says results
+        GameManager.instance.PlayRandomVoiceAudio();
+
+        // disable standard bubble
+        questionText.transform.GetChild(2).gameObject.SetActive(false);
+
         answered = true;
         nextQuestionTimer = 0;
         trueButton.GetComponent<Button>().interactable = false;
@@ -227,19 +296,33 @@ public class QuestionManager : MonoBehaviour
 
         if (correctAnswer == (buttonType ? 1 : 0))
         {
-            bossHP -= HP_ON_CORRECT;
-            if (bossHP < 0)
-                bossHP = 0;
+            remainingSongs -= HP_ON_CORRECT;
+            if (remainingSongs < 0)
+                remainingSongs = 0;
 
-            questionText.SetText("Good job! You just destroyed X tracks!");
+            // set question text in response to answer
+            showQuestionRightText(HP_ON_CORRECT);
+
+            // enable correct bubble
+            questionText.transform.GetChild(3).gameObject.SetActive(true);
+
+            // announcer talk
+            announcerAnimator.SetTrigger("talk");
         }
         else
         {
-            bossHP += HP_ON_INCORRECT;
-            if (bossHP > MAX_HP)
-                bossHP = MAX_HP; // ensures HP does not exceed max
+            remainingSongs += HP_ON_INCORRECT;
+            if (remainingSongs > MAX_HP)
+                remainingSongs = MAX_HP; // ensures HP does not exceed max
 
-            questionText.SetText("Uh Oh! Y more tracks were just created!");
+            // set question text in response to answer
+            showQuestionWrongText(HP_ON_INCORRECT);
+
+            // enable incorrect bubble
+            questionText.transform.GetChild(4).gameObject.SetActive(true);
+
+            // announcer shock
+            announcerAnimator.SetTrigger("shock");
         }
 
         // show check and x marks to show correct and incorrect answers
@@ -277,6 +360,12 @@ public class QuestionManager : MonoBehaviour
 
     private void multipleChoicePress(int letter)
     {
+        // announcer says results
+        GameManager.instance.PlayRandomVoiceAudio();
+
+        // disable standard bubble
+        questionText.transform.GetChild(2).gameObject.SetActive(false);
+
         answered = true;
         nextQuestionTimer = 0;
         aButton.GetComponent<Button>().interactable = false;
@@ -286,19 +375,33 @@ public class QuestionManager : MonoBehaviour
 
         if (correctAnswer == letter)
         {
-            bossHP -= HP_ON_CORRECT;
-            if (bossHP < 0)
-                bossHP = 0;
+            remainingSongs -= HP_ON_CORRECT;
+            if (remainingSongs < 0)
+                remainingSongs = 0;
 
-            questionText.SetText("Good job! You just destroyed X tracks!");
+            // set question text in response to answer
+            showQuestionRightText(HP_ON_CORRECT);
+
+            // enable correct bubble
+            questionText.transform.GetChild(3).gameObject.SetActive(true);
+
+            // announcer talk
+            announcerAnimator.SetTrigger("talk");
         }
         else
         {
-            bossHP += HP_ON_INCORRECT;
-            if (bossHP > MAX_HP)
-                bossHP = MAX_HP; // ensures HP does not exceed max
+            remainingSongs += HP_ON_INCORRECT;
+            if (remainingSongs > MAX_HP)
+                remainingSongs = MAX_HP; // ensures HP does not exceed max
 
-            questionText.SetText("Uh Oh! Y more tracks were just created!");
+            // set question text in response to answer
+            showQuestionWrongText(HP_ON_INCORRECT);
+
+            // enable incorrect bubble
+            questionText.transform.GetChild(4).gameObject.SetActive(true);
+
+            // announcer shock
+            announcerAnimator.SetTrigger("shock");
         }
 
         // show check and x marks to show correct and incorrect answers
@@ -336,5 +439,79 @@ public class QuestionManager : MonoBehaviour
         cButton.transform.GetChild(1).gameObject.SetActive(false);
         dButton.transform.GetChild(1).gameObject.SetActive(false);
     }
+
+    public void confirmPress()
+    {
+        // announcer says results
+        GameManager.instance.PlayRandomVoiceAudio();
+
+        // disable standard bubble
+        questionText.transform.GetChild(2).gameObject.SetActive(false);
+
+        answered = true;
+        nextQuestionTimer = 0;
+        confirmButton.GetComponent<Button>().interactable = false;
+        slider.interactable = false;
+
+        if (correctAnswer >= rangeCenterGuess - 0.1f && correctAnswer <= rangeCenterGuess + 0.1f)
+        {
+            remainingSongs -= HP_ON_CORRECT;
+            if (remainingSongs < 0)
+                remainingSongs = 0;
+
+            // set question text in response to answer
+            showQuestionRightText(HP_ON_CORRECT);
+
+            // show check mark and show correct answer
+            confirmButton.transform.GetChild(2).gameObject.SetActive(true);
+            rangeText.SetText("Current Range: " + (rangeCenterGuess - 0.1f).ToString("0.00") + "-" + (rangeCenterGuess + 0.1f).ToString("0.00")
+            + "\n<color=green>Correct Answer: " + correctAnswer.ToString("0.00") +"</color>");
+
+            // enable correct bubble
+            questionText.transform.GetChild(3).gameObject.SetActive(true);
+
+            // announcer talk
+            announcerAnimator.SetTrigger("talk");
+        }
+        else
+        {
+            remainingSongs += HP_ON_INCORRECT;
+            if (remainingSongs > MAX_HP)
+                remainingSongs = MAX_HP; // ensures HP does not exceed max
+
+            // set question text in response to answer
+            showQuestionWrongText(HP_ON_INCORRECT);
+
+            // show check mark and show incorrect answer
+            confirmButton.transform.GetChild(1).gameObject.SetActive(true);
+            rangeText.SetText("Current Range: " + (rangeCenterGuess - 0.1f).ToString("0.00") + "-" + (rangeCenterGuess + 0.1f).ToString("0.00")
+            + "\n<color=red>Correct Answer: " + correctAnswer.ToString("0.00") + "</color>");
+
+            // enable incorrect bubble
+            questionText.transform.GetChild(4).gameObject.SetActive(true);
+
+            // announcer shock
+            announcerAnimator.SetTrigger("shock");
+        }
+    }
+
+    private void showQuestionRightText(int removedSongs)
+    {
+        int rand = Random.Range(0, 2);
+        if (rand == 0)
+            questionText.SetText("Great job! That's " + removedSongs + " more songs gone!");
+        else
+            questionText.SetText("Good job! You just obliterated " + removedSongs + " tracks!");
+    }
+
+    private void showQuestionWrongText(int addedSongs)
+    {
+        int rand = Random.Range(0, 2);
+        if (rand == 0)
+            questionText.SetText("Oh no! You just added " + addedSongs + " more tracks!");
+        else
+            questionText.SetText(addedSongs + " new songs were just added!?! That's too many!");
+    }
+
     #endregion
 }
