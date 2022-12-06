@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [System.Serializable]
@@ -26,7 +27,7 @@ public class HashMap
     private int removeLine = 1;
 
     //Probing Type
-
+    string probeMethod = "quadratic";
 
     //Debug Vars
     private int skipped = 0;
@@ -34,7 +35,7 @@ public class HashMap
 
 
     //Initialize the HashMap
-    public void Initialize()
+    public void Initialize(string probeMethod)
     {
         hashTable = new Song[maxSize];
 
@@ -42,13 +43,18 @@ public class HashMap
         dataLines = File.ReadAllLines("Assets/DataSet/tracks_features.csv");
 
         //Add the initial 100000
-        //AddX(100000);
+        AddX(100000);
+
+        //Set the probing method
+        this.probeMethod = probeMethod;
 
     }
 
     //Add x elements to the hashtable from the dataset
     public void AddX(int x)
     {
+        var watch = System.Diagnostics.Stopwatch.StartNew();
+
         //Num added
         int added = 0;
 
@@ -65,8 +71,11 @@ public class HashMap
                 if (elements[8] == "True")
                     ex = true;
 
+                //Get rid of the extra characters around the artist name
+                string artist = elements[4].Substring(2, elements[4].Length - 4);
+
                 //Add the file elements to the hash map
-                Add(elements[0], new Song(elements[0], elements[1], elements[2], elements[4], ex, Double.Parse(elements[9])));
+                Add(elements[0], new Song(elements[0], elements[1], elements[2], artist, ex, Double.Parse(elements[9])));
                 added++;
             }
 
@@ -78,13 +87,17 @@ public class HashMap
             currLine++;
         }
 
+        watch.Stop();
+
         //Display number of elements added
-        Debug.Log("Added " + added + " Songs");
+        Debug.Log("Added " + added + " Songs, Execution Time: " + watch.ElapsedMilliseconds + "ms, Average Time per Insertion: " + watch.ElapsedMilliseconds / (double)added + "ms");
     }
 
     //Remove x elements to the hashtable
     public void RemoveX(int x)
     {
+        var watch = System.Diagnostics.Stopwatch.StartNew();
+
         //Num removed
         int removed = 0;
 
@@ -104,15 +117,19 @@ public class HashMap
             removeLine++;
         }
 
+        watch.Stop();
+
         //Display number of elements removed
-        Debug.Log("Removed " + removed + " Songs"); 
+        Debug.Log("Removed " + removed + " Songs, Execution Time: " + watch.ElapsedMilliseconds + "ms, Average Time per Deletion: " + watch.ElapsedMilliseconds / (double)removed + "ms");
     }
 
     //Add a specific item
     public void Add(string key, Song song)
     {
         //Find the position to insert
-        int pos = FindAddPosLinear(key);
+        int pos = 0;
+        if (this.probeMethod == "linear") pos = FindAddPosLinear(key);
+        else pos = FindAddPosQuadratic(key);
 
         //Increase the size only if its a new entry or gravestone
         if(hashTable[pos] == null || hashTable[pos].getID() == "")
@@ -130,7 +147,9 @@ public class HashMap
     //Remove a specific key
     public void Remove(string key)
     {
-        int idx = FindKeyPosLinear(key);
+        int idx = 0;
+        if (this.probeMethod == "linear") idx = FindKeyPosLinear(key);
+        else idx = FindKeyPosQuadratic(key);
 
         //Do stuff if it was found
         if (idx != -1)
@@ -151,6 +170,51 @@ public class HashMap
         }
     }
 
+    //Gets 4 songs
+    public List<Song> GetRandomSongs()
+    {
+        List<Song> songs = new List<Song>();
+        int idx = UnityEngine.Random.Range(0, maxSize);
+
+        for (int i = 0; i < 4; i++)
+        {
+            //Find the next index that contains a value
+            while (hashTable[idx] == null || hashTable[idx].getID() == "")
+            {
+                idx++;
+
+                //Don't go too far
+                if (idx >= maxSize)
+                    idx -= maxSize;
+            }
+
+            //Add it to the list then increase idx so that we don't get 4 of the same song
+            songs.Add(hashTable[idx]);
+            idx++;
+        }
+
+        return songs;
+    }
+
+
+    //Gets a song
+    public Song GetRandomSong()
+    {
+        int idx = UnityEngine.Random.Range(0, maxSize);
+
+        //Find the next index that contains a value
+        while (hashTable[idx] == null || hashTable[idx].getID() == "")
+        {
+            idx++;
+
+            //Don't go too far
+            if (idx >= maxSize)
+                idx -= maxSize;
+        }
+        
+        return hashTable[idx];
+    }
+
 
     #region PRIVATE HELPER FUNCTIONS
 
@@ -160,9 +224,29 @@ public class HashMap
         int pos = Hash(key);
 
         //Go through the array to locate the position
-        while (hashTable[pos] != null && hashTable[pos].getID() != key)
+        while (hashTable[pos] != null && hashTable[pos].getID() != key && hashTable[pos].getID() != "")
         {
             pos++;
+
+            //Check if we exceeded the size
+            if (pos >= maxSize)
+                pos -= maxSize;
+        }
+
+        return pos;
+    }
+
+    //Find position for a key quadratically (for insertion)
+    private int FindAddPosQuadratic(string key)
+    {
+        int pos = Hash(key);
+        int collisions = 0;
+
+        //Go through the array to locate the position
+        while (hashTable[pos] != null && hashTable[pos].getID() != key && hashTable[pos].getID() != "")
+        {
+            collisions++;
+            pos += collisions*collisions;
 
             //Check if we exceeded the size
             if (pos >= maxSize)
@@ -179,9 +263,34 @@ public class HashMap
         int pos = Hash(key);
 
         //Go through array until we find it (or until a null)
-        while(hashTable[pos] != null && hashTable[pos].getID() != "" && hashTable[pos].getID() != key)
+        while(hashTable[pos] != null && hashTable[pos].getID() != key)
         {
             pos++;
+
+            //Check if we exceeded the size
+            if (pos >= maxSize)
+                pos -= maxSize;
+        }
+
+        //Check if we couldn't find it
+        if (hashTable[pos] == null)
+            return -1;
+
+        return pos;
+    }
+
+    //Find position for a key quadratically (for deletion and search)
+    //Returns -1 if we couldn't find it
+    private int FindKeyPosQuadratic(string key)
+    {
+        int pos = Hash(key);
+        int collisions = 0;
+
+        //Go through array until we find it (or until a null)
+        while (hashTable[pos] != null && hashTable[pos].getID() != key)
+        {
+            collisions++;
+            pos += collisions * collisions;
 
             //Check if we exceeded the size
             if (pos >= maxSize)
@@ -261,7 +370,7 @@ public class HashMap
     public void DebugPrint()
     {
         Debug.Log("Current Size is " + currSize + ", Max Size is " + maxSize + ", Number of Songs Skipped is " + skipped + ", Number of Gravestones is " + graves);
-        Debug.Log("Current Line is " + currLine + ", Current Removal Line is " + removeLine);
+        Debug.Log("Probing Method is " + probeMethod + ", Current Load Factor is " + (((double)currSize + (double)graves)/ (double)maxSize) + ", Max Load Factor is " + maxLoadFactor);
     }
 
     //Prints the next prime
@@ -274,6 +383,23 @@ public class HashMap
     public bool Empty()
     {
         return currSize == 0;
+    }
+
+    //Prints the entire hash table
+    public void PrintAll()
+    {
+        for(int i = 0; i < maxSize; i++)
+        {
+            if (hashTable[i] == null) Debug.Log(i + ": Empty spot");
+            else if (hashTable[i].getID() == "") Debug.Log(i + ": Gravestone");
+            else Debug.Log(i + ": " + Hash(hashTable[i].getID()) + ", " + hashTable[i].getName() + ", " + hashTable[i].getAlbum() + ", " + hashTable[i].getArtist() + ", " + hashTable[i].isExplicit() + ", " + hashTable[i].getDanceability());
+        }
+    }
+
+    //Sets the probe method (never going to be used in the actual game)
+    public void SetProbeMethod(string probeMethod)
+    {
+        this.probeMethod = probeMethod;
     }
     #endregion
 }
