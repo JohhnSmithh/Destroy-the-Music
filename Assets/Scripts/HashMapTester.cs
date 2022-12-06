@@ -14,7 +14,7 @@ public class HashMapTester : MonoBehaviour
     void Start()
     {
         hashMap = new();
-        hashMap.Initialize();
+        hashMap.Initialize("quadratic");
     }
 
     //Prints it
@@ -41,9 +41,30 @@ public class HashMapTester : MonoBehaviour
         hashMap.DebugNextPrime(Random.Range(1,200000));
     }
 
-    //Debug if it really empty
-    public void IsEmpty()
+    //Gets a random song from the hash map
+    public void GetSong()
     {
-        Debug.Log(hashMap.Empty());
+        Debug.Log(hashMap.GetRandomSong().getName());
+    }
+
+    //Gets a random 4 songs from the hash map
+    public void GetSongs()
+    {
+        List<Song> songs = hashMap.GetRandomSongs();
+        Debug.Log(songs[0].getName() + ", " + songs[1].getName() + ", " + songs[2].getName() + ", " + songs[3].getName());
+        Debug.Log(songs[0].getArtist() + ", " + songs[1].getArtist() + ", " + songs[2].getArtist() + ", " + songs[3].getArtist());
+        Debug.Log(songs[0].getAlbum() + ", " + songs[1].getAlbum() + ", " + songs[2].getAlbum() + ", " + songs[3].getAlbum());
+    }
+
+    //Prints the entire hash map
+    public void PrintAll()
+    {
+        hashMap.PrintAll();
+    }
+
+    //Changes the probe method
+    public void SetProbeMethod(string probeMethod)
+    {
+        hashMap.SetProbeMethod(probeMethod);
     }
 }
