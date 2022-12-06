@@ -6,17 +6,15 @@ public class HashMapTester : MonoBehaviour
     //HashMap baby
     private HashMap hashMap;
 
+    //Values for how many to add and remove
+    [SerializeField] int addAmt = 50000;
+    [SerializeField] int removeAmt = 100;
+
     // Start is called before the first frame update
     void Start()
     {
         hashMap = new();
         hashMap.Initialize();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     //Prints it
@@ -28,19 +26,24 @@ public class HashMapTester : MonoBehaviour
     //Add 1 Element
     public void AddSome()
     {
-        hashMap.AddX(50000);
+        hashMap.AddX(addAmt);
     }
 
     //Remove 1 Element
     public void RemoveSome()
     {
-        hashMap.Remove("1LP5MfZ4SY8n61NtJ6joBP");
-        hashMap.Remove("21dGdGBsiCHMWgjAk9dZTQ");
+        hashMap.RemoveX(removeAmt);
     }
 
     //Debug Prime
     public void PrintNextPrime()
     {
         hashMap.DebugNextPrime(Random.Range(1,200000));
+    }
+
+    //Debug if it really empty
+    public void IsEmpty()
+    {
+        Debug.Log(hashMap.Empty());
     }
 }

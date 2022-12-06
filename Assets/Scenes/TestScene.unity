@@ -1289,7 +1289,7 @@ GameObject:
   - component: {fileID: 764122567}
   - component: {fileID: 764122566}
   m_Layer: 5
-  m_Name: Next Prime Button
+  m_Name: Is Empty Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1376,7 +1376,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1624060696}
         m_TargetAssemblyTypeName: HashMapTester, Assembly-CSharp
-        m_MethodName: PrintNextPrime
+        m_MethodName: IsEmpty
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1754,7 +1754,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Rand Prime
+  m_text: Is Empty
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3d85bf44afa1bde4d9e8fd4f09958f73, type: 2}
   m_sharedMaterial: {fileID: -3302247075856416199, guid: 3d85bf44afa1bde4d9e8fd4f09958f73, type: 2}
@@ -3154,6 +3154,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd71a73734c8bfe41baa55971827cf8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  addAmt: 50000
+  removeAmt: 100
 --- !u!4 &1624060697
 Transform:
   m_ObjectHideFlags: 0

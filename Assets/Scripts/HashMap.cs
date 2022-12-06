@@ -17,18 +17,20 @@ public class HashMap
     //Hash Tabel array
     private Song[] hashTable;
 
-    //Load factor, number of current elements, and the like
+    //Current elements
     private int currSize = 0;
 
     //Data stuff
-    string[] dataLines;
-    int currLine = 1;
+    private string[] dataLines;
+    private int currLine = 1;
+    private int removeLine = 1;
 
     //Probing Type
 
 
     //Debug Vars
-    int skipped = 0;
+    private int skipped = 0;
+    private int graves = 0;
 
 
     //Initialize the HashMap
@@ -47,12 +49,15 @@ public class HashMap
     //Add x elements to the hashtable from the dataset
     public void AddX(int x)
     {
-        for (int i = currLine; i < currLine + x; i++)
-        {
-            string[] elements = dataLines[i].Split(',');
-            //Debug.Log("Length: " + elements.Length + " " + elements[0] + " " + elements[1] + " " + elements[2] + " " + elements[4] + " " + elements[8] + " " + elements[9]);
+        //Num added
+        int added = 0;
 
-            //Only do stuff if the lines are valid when delimited
+        //Add 'em
+        while(added < x && currLine < dataLines.Length)
+        {
+            string[] elements = dataLines[currLine].Split(',');
+
+            //Only add if valid line
             if (elements.Length == 24)
             {
                 //Find if it's explicit
@@ -62,22 +67,45 @@ public class HashMap
 
                 //Add the file elements to the hash map
                 Add(elements[0], new Song(elements[0], elements[1], elements[2], elements[4], ex, Double.Parse(elements[9])));
+                added++;
             }
+
+            //Increased skipped counter
             else
                 skipped++;
+
+            //Go to the next line
+            currLine++;
         }
 
-        //Increase the current line so we don't read them twice
-        currLine += x;
-
-        //Debug Successful
-        Debug.Log("Successfully Added " + x + " Elements");
+        //Display number of elements added
+        Debug.Log("Added " + added + " Songs");
     }
 
     //Remove x elements to the hashtable
     public void RemoveX(int x)
     {
+        //Num removed
+        int removed = 0;
 
+        //Remove
+        while(removed < x && currSize != 0)
+        {
+            string[] elements = dataLines[removeLine].Split(',');
+
+            //Only remove if valid line
+            if(elements.Length == 24)
+            {
+                Remove(elements[0]);
+                removed++;
+            }
+
+            //Go to next line
+            removeLine++;
+        }
+
+        //Display number of elements removed
+        Debug.Log("Removed " + removed + " Songs"); 
     }
 
     //Add a specific item
@@ -94,7 +122,7 @@ public class HashMap
         hashTable[pos] = song;
 
         //If size is too big, resize
-        if ((double)currSize / (double)maxSize >= maxLoadFactor)
+        if (((double)currSize + (double)graves)/ (double)maxSize >= maxLoadFactor)
             Resize();
 
     }
@@ -103,14 +131,24 @@ public class HashMap
     public void Remove(string key)
     {
         int idx = FindKeyPosLinear(key);
-        Debug.Log(idx + ": " + key + " " + hashTable[idx].getID() + " " + hashTable[idx].getName());
+
+        //Do stuff if it was found
+        if (idx != -1)
+            Remove(idx);
+        else
+            Debug.Log("Key " + key + " Not Found");
+
     }
 
     //Remove a specific indx
     public void Remove(int idx)
     {
-        if(idx < maxSize && hashTable[idx] != null)
+        if (idx < maxSize && hashTable[idx] != null)
+        {
             hashTable[idx] = new Song();
+            graves++;
+            currSize--;
+        }
     }
 
 
@@ -174,6 +212,7 @@ public class HashMap
         Song[] tempArray = (Song[]) hashTable.Clone();
         hashTable = new Song[maxSize];
         currSize = 0;
+        graves = 0;
 
         //Rehash / add everything
         for(int i = 0; i < tempArray.Length; i++)
@@ -221,13 +260,20 @@ public class HashMap
     //Prints the array
     public void DebugPrint()
     {
-        Debug.Log("Current Size is " + currSize + ", Max Size is " + maxSize + ", Number of Songs Skipped is " + skipped); 
+        Debug.Log("Current Size is " + currSize + ", Max Size is " + maxSize + ", Number of Songs Skipped is " + skipped + ", Number of Gravestones is " + graves);
+        Debug.Log("Current Line is " + currLine + ", Current Removal Line is " + removeLine);
     }
 
     //Prints the next prime
     public void DebugNextPrime(int n)
     {
         Debug.Log("Next prime after " + n + " is " + NextPrime(n));
+    }
+
+    //Returns whether there are any actual elements in the array or not, ignoring gravestones
+    public bool Empty()
+    {
+        return currSize == 0;
     }
     #endregion
 }
