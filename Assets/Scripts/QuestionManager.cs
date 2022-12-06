@@ -55,8 +55,8 @@ public class QuestionManager : MonoBehaviour
         announcerAnimator = GameObject.Find("Announcer").GetComponent<Animator>();
 
         // set up text/dialogue for before any questions
-        questionText.SetText("Welcome music haters to the most popular game show of all time, Destroy The Music! " +
-            "Let's see what you've got as we move on to your first challenging question!");
+        questionText.SetText("Don’t cue it up, or I’ll get sick, because tonight we’re going to DESTROY THE MUSIC! " +
+            "Welcome back, music haters - let’s give our new contestant some questions!");
 
         // initialize all buttons to NOT active
         trueButton.SetActive(false);
@@ -100,10 +100,10 @@ public class QuestionManager : MonoBehaviour
                 rangeText.gameObject.SetActive(false);
 
                 // reset to proper text box texture
-                questionText.transform.GetChild(0).gameObject.SetActive(false);
-                questionText.transform.GetChild(1).gameObject.SetActive(true);
-                questionText.transform.GetChild(2).gameObject.SetActive(false);
+                questionText.transform.GetChild(1).gameObject.SetActive(false);
+                questionText.transform.GetChild(2).gameObject.SetActive(true);
                 questionText.transform.GetChild(3).gameObject.SetActive(false);
+                questionText.transform.GetChild(4).gameObject.SetActive(false);
 
                 // randomly select next question type
                 questionType = (QuestionType) Random.Range(0, 4);
@@ -287,7 +287,7 @@ public class QuestionManager : MonoBehaviour
         GameManager.instance.PlayRandomVoiceAudio();
 
         // disable standard bubble
-        questionText.transform.GetChild(1).gameObject.SetActive(false);
+        questionText.transform.GetChild(2).gameObject.SetActive(false);
 
         answered = true;
         nextQuestionTimer = 0;
@@ -300,10 +300,11 @@ public class QuestionManager : MonoBehaviour
             if (remainingSongs < 0)
                 remainingSongs = 0;
 
-            questionText.SetText("Good job! You just destroyed X tracks!");
+            // set question text in response to answer
+            showQuestionRightText(HP_ON_CORRECT);
 
             // enable correct bubble
-            questionText.transform.GetChild(2).gameObject.SetActive(true);
+            questionText.transform.GetChild(3).gameObject.SetActive(true);
 
             // announcer talk
             announcerAnimator.SetTrigger("talk");
@@ -314,10 +315,11 @@ public class QuestionManager : MonoBehaviour
             if (remainingSongs > MAX_HP)
                 remainingSongs = MAX_HP; // ensures HP does not exceed max
 
-            questionText.SetText("Uh Oh! Y more tracks were just created!");
+            // set question text in response to answer
+            showQuestionWrongText(HP_ON_INCORRECT);
 
             // enable incorrect bubble
-            questionText.transform.GetChild(3).gameObject.SetActive(true);
+            questionText.transform.GetChild(4).gameObject.SetActive(true);
 
             // announcer shock
             announcerAnimator.SetTrigger("shock");
@@ -362,7 +364,7 @@ public class QuestionManager : MonoBehaviour
         GameManager.instance.PlayRandomVoiceAudio();
 
         // disable standard bubble
-        questionText.transform.GetChild(1).gameObject.SetActive(false);
+        questionText.transform.GetChild(2).gameObject.SetActive(false);
 
         answered = true;
         nextQuestionTimer = 0;
@@ -377,10 +379,11 @@ public class QuestionManager : MonoBehaviour
             if (remainingSongs < 0)
                 remainingSongs = 0;
 
-            questionText.SetText("Good job! You just destroyed X tracks!");
+            // set question text in response to answer
+            showQuestionRightText(HP_ON_CORRECT);
 
             // enable correct bubble
-            questionText.transform.GetChild(2).gameObject.SetActive(true);
+            questionText.transform.GetChild(3).gameObject.SetActive(true);
 
             // announcer talk
             announcerAnimator.SetTrigger("talk");
@@ -391,10 +394,11 @@ public class QuestionManager : MonoBehaviour
             if (remainingSongs > MAX_HP)
                 remainingSongs = MAX_HP; // ensures HP does not exceed max
 
-            questionText.SetText("Uh Oh! Y more tracks were just created!");
+            // set question text in response to answer
+            showQuestionWrongText(HP_ON_INCORRECT);
 
             // enable incorrect bubble
-            questionText.transform.GetChild(3).gameObject.SetActive(true);
+            questionText.transform.GetChild(4).gameObject.SetActive(true);
 
             // announcer shock
             announcerAnimator.SetTrigger("shock");
@@ -442,7 +446,7 @@ public class QuestionManager : MonoBehaviour
         GameManager.instance.PlayRandomVoiceAudio();
 
         // disable standard bubble
-        questionText.transform.GetChild(1).gameObject.SetActive(false);
+        questionText.transform.GetChild(2).gameObject.SetActive(false);
 
         answered = true;
         nextQuestionTimer = 0;
@@ -455,7 +459,8 @@ public class QuestionManager : MonoBehaviour
             if (remainingSongs < 0)
                 remainingSongs = 0;
 
-            questionText.SetText("Good job! You just destroyed X tracks!");
+            // set question text in response to answer
+            showQuestionRightText(HP_ON_CORRECT);
 
             // show check mark and show correct answer
             confirmButton.transform.GetChild(2).gameObject.SetActive(true);
@@ -463,7 +468,7 @@ public class QuestionManager : MonoBehaviour
             + "\n<color=green>Correct Answer: " + correctAnswer.ToString("0.00") +"</color>");
 
             // enable correct bubble
-            questionText.transform.GetChild(2).gameObject.SetActive(true);
+            questionText.transform.GetChild(3).gameObject.SetActive(true);
 
             // announcer talk
             announcerAnimator.SetTrigger("talk");
@@ -474,7 +479,8 @@ public class QuestionManager : MonoBehaviour
             if (remainingSongs > MAX_HP)
                 remainingSongs = MAX_HP; // ensures HP does not exceed max
 
-            questionText.SetText("Uh Oh! Y more tracks were just created!");
+            // set question text in response to answer
+            showQuestionWrongText(HP_ON_INCORRECT);
 
             // show check mark and show incorrect answer
             confirmButton.transform.GetChild(1).gameObject.SetActive(true);
@@ -482,11 +488,30 @@ public class QuestionManager : MonoBehaviour
             + "\n<color=red>Correct Answer: " + correctAnswer.ToString("0.00") + "</color>");
 
             // enable incorrect bubble
-            questionText.transform.GetChild(3).gameObject.SetActive(true);
+            questionText.transform.GetChild(4).gameObject.SetActive(true);
 
             // announcer shock
             announcerAnimator.SetTrigger("shock");
         }
     }
+
+    private void showQuestionRightText(int removedSongs)
+    {
+        int rand = Random.Range(0, 2);
+        if (rand == 0)
+            questionText.SetText("Great job! That's " + removedSongs + " more songs gone!");
+        else
+            questionText.SetText("Good job! You just obliterated " + removedSongs + " tracks!");
+    }
+
+    private void showQuestionWrongText(int addedSongs)
+    {
+        int rand = Random.Range(0, 2);
+        if (rand == 0)
+            questionText.SetText("Oh no! You just added " + addedSongs + " more tracks!");
+        else
+            questionText.SetText(addedSongs + " new songs were just added!?! That's too many!");
+    }
+
     #endregion
 }
