@@ -10,7 +10,7 @@ using UnityEngine;
 public class HashMap
 {
     //Starting size
-    private int maxSize = 100003;
+    private int maxSize = 3;
 
     //Max Load Factor
     private double maxLoadFactor = 0.5;
@@ -32,10 +32,12 @@ public class HashMap
     //Debug Vars
     private int skipped = 0;
     private int graves = 0;
-    private double totalAddRuntime = 0;
-    private double totalRemoveRuntime = 0;
-    private int totalAdded = 0;
-    private int totalRemoved = 0;
+
+    //Runtime stuff
+    private double lastAddRuntime = 0;
+    private double lastRemoveRuntime = 0;
+    private int lastAdded = 0;
+    private int lastRemoved = 0;
 
 
     //Initialize the HashMap
@@ -46,11 +48,11 @@ public class HashMap
         //Read the data for later acces
         dataLines = File.ReadAllLines("Assets/DataSet/tracks_features.csv");
 
-        //Add the initial 100000
-        AddX(100000);
-
         //Set the probing method
         this.isLinear = isLinear;
+
+        //Add the initial 100000
+        AddX(100000);
 
     }
 
@@ -97,8 +99,8 @@ public class HashMap
         Debug.Log("Added " + added + " Songs, Execution Time: " + watch.ElapsedMilliseconds + "ms, Average Time per Insertion: " + watch.ElapsedMilliseconds / (double)added + "ms");
 
         //Add to the running average
-        totalAdded += added;
-        totalAddRuntime += watch.ElapsedMilliseconds;
+        lastAdded = added;
+        lastAddRuntime = watch.ElapsedMilliseconds;
     }
 
     //Remove x elements to the hashtable
@@ -131,21 +133,26 @@ public class HashMap
         Debug.Log("Removed " + removed + " Songs, Execution Time: " + watch.ElapsedMilliseconds + "ms, Average Time per Deletion: " + watch.ElapsedMilliseconds / (double)removed + "ms");
 
         //Add to the running average
-        totalRemoved += removed;
-        totalRemoveRuntime += watch.ElapsedMilliseconds;
+        lastRemoved = removed;
+        lastRemoveRuntime = watch.ElapsedMilliseconds;
     }
 
     //Add a specific item
     public void Add(string key, Song song)
     {
         //Find the position to insert
-        int pos = 0;
-        if (this.isLinear) pos = FindAddPosLinear(key);
+        int pos;
+        if (isLinear) pos = FindAddPosLinear(key);
         else pos = FindAddPosQuadratic(key);
 
         //Increase the size only if its a new entry or gravestone
-        if(hashTable[pos] == null || hashTable[pos].getID() == "")
+        if (hashTable[pos] == null)
             currSize++;
+        else if(hashTable[pos].getID() == "")
+        {
+            currSize++;
+            graves--;
+        }
 
         //Add the song in the appropriate location
         hashTable[pos] = song;
@@ -159,8 +166,8 @@ public class HashMap
     //Remove a specific key
     public void Remove(string key)
     {
-        int idx = 0;
-        if (this.isLinear) idx = FindKeyPosLinear(key);
+        int idx;
+        if (isLinear) idx = FindKeyPosLinear(key);
         else idx = FindKeyPosQuadratic(key);
 
         //Do stuff if it was found
@@ -249,21 +256,15 @@ public class HashMap
     }
 
     //Returns the running average of add operations
-    public double GetAddAvgRuntime()
+    public double GetLastAddRuntime()
     {
-        return totalAddRuntime / totalAdded;
+        return lastAddRuntime / lastAdded;
     }
 
     //Returns the running average of remove operations
-    public double GetRemoveAvgRuntime()
+    public double GetLastRemoveRuntime()
     {
-        return totalRemoveRuntime / totalRemoved;
-    }
-
-    //Returns the running average of all operations
-    public double GetAvgRuntime()
-    {
-        return (totalAddRuntime + totalRemoveRuntime) / (totalAdded + totalRemoved);
+        return lastRemoveRuntime / lastRemoved;
     }
 
 
