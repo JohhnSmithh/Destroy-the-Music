@@ -502,7 +502,9 @@ MonoBehaviour:
 
     Linear
 
-    FPS: num'
+    Avg Time/Operation:
+
+    NUM'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3d85bf44afa1bde4d9e8fd4f09958f73, type: 2}
   m_sharedMaterial: {fileID: -3302247075856416199, guid: 3d85bf44afa1bde4d9e8fd4f09958f73, type: 2}
