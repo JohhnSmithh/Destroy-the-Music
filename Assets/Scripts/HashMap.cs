@@ -46,7 +46,7 @@ public class HashMap
         hashTable = new Song[maxSize];
 
         //Read the data for later acces
-        dataLines = File.ReadAllLines("Assets/DataSet/tracks_features.csv");
+        dataLines = File.ReadAllLines(Application.persistentDataPath + "/tracks_features.csv");
 
         //Set the probing method
         this.isLinear = isLinear;
