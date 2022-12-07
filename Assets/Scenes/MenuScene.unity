@@ -1233,6 +1233,7 @@ MonoBehaviour:
   voice5: {fileID: 8300000, guid: 16b0d1818c0d57a419627b873c917926, type: 3}
   musicAudioSource: {fileID: 1079089081}
   music: {fileID: 8300000, guid: 954ac631a7bceda46b1fbffc175a3336, type: 3}
+  dataSet: {fileID: 4900000, guid: 14514a2954005034097b3c2e8878f49c, type: 3}
 --- !u!4 &1079089079
 Transform:
   m_ObjectHideFlags: 0
